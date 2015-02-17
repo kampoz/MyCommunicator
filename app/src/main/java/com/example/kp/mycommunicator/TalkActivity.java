@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,19 +51,21 @@ public class TalkActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_talk);
+
         messegesArray = new ArrayList<String>();
         Intent intent = getIntent();
         extras = intent.getExtras();
-        Log.d(extras.getString("to"), extras.getString("to"));
+//        Log.d(extras.getString("to"), extras.getString("to"));
         et = (EditText)findViewById(R.id.editText3);
         tv = (TextView)findViewById(R.id.textView2);
         tv.setText(MainActivity.interlocutor);
         listView = (ListView) findViewById(R.id.listView2);
         arrayAdapter = new ArrayAdapter<String>(
                 this,
-                R.layout.contacts_list_view,
+                R.layout.contacts_list_view,       //tu byly zmiany
                 messegesArray);
         listView.setAdapter(arrayAdapter);
+        listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
         RequestUnsentMessages requestUnsentMessages = new RequestUnsentMessages();
         requestUnsentMessages.execute();
@@ -133,10 +136,15 @@ public class TalkActivity extends ActionBarActivity {
                     Log.d("================<CLIENT>", "JSON Zapytanie o nieodebrane wiadomości " + JSONOutputMessage + " wysłany!!!! na " + s);
                     br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                     JSONInputMessage = br.readLine();
-                    Log.d("<Przyszło z serwera>=============", JSONInputMessage);
+
+                    //if(JSONInputMessage!=null) {
+                        Log.d("<Przyszło z serwera>=============", JSONInputMessage);
+                    //}
                     publishProgress(1);
 
                     //Thread.sleep(1000);
+                    br.close();
+                    s.close();
 
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
@@ -150,7 +158,9 @@ public class TalkActivity extends ActionBarActivity {
             try {
                 JSONObject jsonObject = new JSONObject(JSONInputMessage);
                 JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
-                arrayAdapter.add(jsonArray.getString(0));           //zmiany w grafice muszą byc przeprowadzone tu, a nie w doInBackground
+                if(jsonArray!=null) {    // wywalic warunek jak bedzie dzialac
+                    arrayAdapter.add(jsonArray.getString(0)); //zmiany w grafice muszą byc przeprowadzone tu, a nie w doInBackground
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();

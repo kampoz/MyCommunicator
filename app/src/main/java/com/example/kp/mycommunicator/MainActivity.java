@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.*;
 import java.net.*;
 
@@ -43,7 +42,6 @@ public class MainActivity extends ActionBarActivity {
         bRegistration = (Button) findViewById(R.id.button4);
         userEt = (EditText) findViewById(R.id.editText);
         passwordEt = (EditText) findViewById(R.id.editText2);
-
         userEt.setText("kamil");
         passwordEt.setText("111");
         //GetResponse getResponseTask = new GetResponse();
@@ -54,7 +52,6 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 username = userEt.getText().toString();
                 password = passwordEt.getText().toString();
-
                 CheckLoginThread checkLoginThread = new CheckLoginThread();
                 checkLoginThread.execute();
             }
