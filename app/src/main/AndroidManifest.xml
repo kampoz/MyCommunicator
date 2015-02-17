@@ -22,12 +22,20 @@
         <activity
             android:name=".TalkActivity"
             android:label="@string/title_activity_talk"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".ContactsActivity"
             android:label="@string/title_activity_contacts"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".Registration"
+            android:label="@string/title_activity_registration" >
+        </activity>
+        <activity
+            android:name=".RegistrationSuccedActivity"
+            android:label="@string/title_activity_registration_succed" >
         </activity>
     </application>
 

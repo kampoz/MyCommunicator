@@ -11,13 +11,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.*;
 import java.net.*;
 
 public class MainActivity extends ActionBarActivity {
-
     private TextView tv;
     private Button bLogin;
+    private Button bRegistration;
     private EditText userEt;
     private EditText passwordEt;
     private String request;
@@ -38,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
 
         tv = (TextView) findViewById(R.id.textView);
         bLogin = (Button) findViewById(R.id.button);
+        bRegistration = (Button) findViewById(R.id.button4);
         userEt = (EditText) findViewById(R.id.editText);
         passwordEt = (EditText) findViewById(R.id.editText2);
 
@@ -56,6 +59,13 @@ public class MainActivity extends ActionBarActivity {
                 checkLoginThread.execute();
             }
         });
+
+        bRegistration.setOnClickListener(new View.OnClickListener(){
+
+            public void onClick(View v) {
+                startRegistrationActivity();
+            }
+        });
     }
 
     //wysyła request z logowaniem
@@ -64,16 +74,20 @@ public class MainActivity extends ActionBarActivity {
         protected Void doInBackground(Void... params) {
             try {
                 Socket s = new Socket(HOST, PORT);
-                printWriter = new PrintWriter(s.getOutputStream(), true);
+                BufferedWriter bufOut = new BufferedWriter( new OutputStreamWriter( s.getOutputStream() ) );
+                //printWriter = new PrintWriter(s.getOutputStream(), true);
                 request = "{ \"action\": \"login\", \"user\": \""+username+"\", \"password\": \""+password+"\" }";
-                printWriter.println(request);
-                printWriter.flush();
+                bufOut.write( request );
+                bufOut.newLine();
+                bufOut.flush();
+                //printWriter.println(request);
+                //printWriter.flush();
                 Log.d("================<CLIENT>", "JSON wysłany!!!! na " + s);
                 br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 response = br.readLine();
                 Log.d(">><CLIENT> Odpowiedź serwera", response);
                 br.close();
-                printWriter.close();
+                //printWriter.close();
                 s.close(); // zamykanie socketu, bo juz jest nieużywany wiecej
 
                 if (response.equals("LOGIN CORRECT"))             //<-- wątek sendRequestTask chyba sie nie zakoncza przy pierwszym wywołaniu if
@@ -82,12 +96,24 @@ public class MainActivity extends ActionBarActivity {
                     userInfo.login = userEt.getText().toString();
                     contactsActivity();
                 }
+                else
+                {
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Niewłaściwy login lub hasło", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            Log.d("onPostExecute", "onPostExecute");
         }
     }
 
@@ -115,6 +141,11 @@ public class MainActivity extends ActionBarActivity {
 
     public void talkActivity(){
         Intent intent = new Intent (this, TalkActivity.class );
+        startActivity(intent);
+    }
+
+    public void startRegistrationActivity(){
+        Intent intent = new Intent (this, Registration.class );
         startActivity(intent);
     }
 

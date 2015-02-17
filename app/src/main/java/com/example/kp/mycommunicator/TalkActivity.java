@@ -30,7 +30,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 public class TalkActivity extends ActionBarActivity {
-
     private EditText et;
     private  Button bSendMessage;
     private  String message;
@@ -51,9 +50,7 @@ public class TalkActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_talk);
-
         messegesArray = new ArrayList<String>();
-
         Intent intent = getIntent();
         extras = intent.getExtras();
         Log.d(extras.getString("to"), extras.getString("to"));
@@ -88,7 +85,7 @@ public class TalkActivity extends ActionBarActivity {
     private class SendMessage extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            Log.d("Gecko", "SendMessage");
+            Log.d("Gecko", "SendMessagee");
             try {
             Socket s = new Socket(HOST, PORT);
             printWriter = new PrintWriter(s.getOutputStream(), true);
@@ -122,9 +119,6 @@ public class TalkActivity extends ActionBarActivity {
     }
 
     private class RequestUnsentMessages extends AsyncTask<Object, Integer, Void> {
-
-
-
         @Override
         protected Void doInBackground(Object... params) {
             while(true) {
@@ -148,9 +142,7 @@ public class TalkActivity extends ActionBarActivity {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } /*catch (InterruptedException e) {
-                    e.printStackTrace();
-                } */
+                }
             }
         }
 
@@ -158,7 +150,7 @@ public class TalkActivity extends ActionBarActivity {
             try {
                 JSONObject jsonObject = new JSONObject(JSONInputMessage);
                 JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
-                arrayAdapter.add(jsonArray.getString(0));
+                arrayAdapter.add(jsonArray.getString(0));           //zmiany w grafice muszą byc przeprowadzone tu, a nie w doInBackground
 
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -6,5 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_talk">TalkActivity</string>
     <string name="title_activity_contacts">ContactsActivity</string>
+    <string name="title_activity_registration">Registration</string>
+    <string name="title_activity_registration_succed">RegistrationSuccedActivity</string>
 
 </resources>
