@@ -44,7 +44,8 @@ public class TalkActivity extends ActionBarActivity {
     private Bundle extras;
     private ListView listView;
     private ArrayList<String> messegesArray;
-    private ArrayAdapter<String> arrayAdapter;
+    private ArrayAdapter<String> arrayAdapter;              //to nie bedzie potrzebne jak zadziala drugi adapter
+    private MessageArrayAdapter messageArrayAdapter;
     TextView tv;
 
     @Override
@@ -60,18 +61,25 @@ public class TalkActivity extends ActionBarActivity {
         tv = (TextView)findViewById(R.id.textView2);
         tv.setText(MainActivity.interlocutor);
         listView = (ListView) findViewById(R.id.listView2);
-        arrayAdapter = new ArrayAdapter<String>(
+
+        // prosty adapter
+        /*arrayAdapter = new ArrayAdapter<String>(
                 this,
                 R.layout.contacts_list_view,       //tu byly zmiany
                 messegesArray);
         listView.setAdapter(arrayAdapter);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-
+        */
+////////////////////nowy adapter////////////////////////////////////////////////////////////////
+        messageArrayAdapter = new MessageArrayAdapter(getApplicationContext(),R.layout.activity_single_message );
+        listView.setAdapter(messageArrayAdapter);
+        listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+////////////////////////////////////////////////////////////////////////////////////////////
         RequestUnsentMessages requestUnsentMessages = new RequestUnsentMessages();
         requestUnsentMessages.execute();
 
+        //wysyłanie wiadomości
         bSendMessage = (Button)findViewById(R.id.button3);
-
         bSendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,17 +98,17 @@ public class TalkActivity extends ActionBarActivity {
         protected Void doInBackground(Void... params) {
             Log.d("Gecko", "SendMessagee");
             try {
-            Socket s = new Socket(HOST, PORT);
-            printWriter = new PrintWriter(s.getOutputStream(), true);
-            String login = UserInfo.getInstance().login;
-            JSONOutputMessage = "{ \"action\": \"message\", \"from\": \""+login+"\", \"to\": \""+extras.getString("to")+"\",  \"contents\": \""+message+"\" }";
+                Socket s = new Socket(HOST, PORT);
+                printWriter = new PrintWriter(s.getOutputStream(), true);
+                String login = UserInfo.getInstance().login;
+                JSONOutputMessage = "{ \"action\": \"message\", \"from\": \""+login+"\", \"to\": \""+extras.getString("to")+"\",  \"contents\": \""+message+"\" }";
 
-            printWriter.println(JSONOutputMessage);
-            Log.d("================<CLIENT>", "JSON "+JSONOutputMessage+" wysłany!!!! na " + s);
-            br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            JSONInputMessage = br.readLine();
+                printWriter.println(JSONOutputMessage);
+                Log.d("================<CLIENT>", "JSON "+JSONOutputMessage+" wysłany!!!! na " + s);
+                br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                JSONInputMessage = br.readLine();       //to jest String
 
-            // <----------INTERPRETACJE JSONA ZROBIC!!!!!!!!!!!!!!! ODCZYTAĆ WIADOMOŚĆ I WYŚWIETLIĆ NA TEXTVIEW!!!!!!!!!!!!!
+                // <----------Można potwierdzić JSONem dostarczenie wiadomosci
 
             } catch (UnknownHostException e) {
                 e.printStackTrace();
@@ -113,7 +121,9 @@ public class TalkActivity extends ActionBarActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            arrayAdapter.add("Ja: "+message);
+            //arrayAdapter.add("Ja: "+message);
+            //messageArrayAdapter.chatText.add("Ja: "+message);
+            messageArrayAdapter.add(new Message(true, message));
         }
 
         protected void onPostExecute(Void result) {
@@ -133,12 +143,12 @@ public class TalkActivity extends ActionBarActivity {
                     JSONOutputMessage = "{ \"action\": \"RequestMessages\", \"from\": \"" + extras.getString("to") + "\", \"to\": \"" + login + "\" }";
 
                     printWriter.println(JSONOutputMessage);
-                    Log.d("================<CLIENT>", "JSON Zapytanie o nieodebrane wiadomości " + JSONOutputMessage + " wysłany!!!! na " + s);
+                    Log.d("================<Gecco>", "JSON Zapytanie o nieodebrane wiadomości " + JSONOutputMessage + " wysłany!!!! na " + s);
                     br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                     JSONInputMessage = br.readLine();
 
                     //if(JSONInputMessage!=null) {
-                        Log.d("<Przyszło z serwera>=============", JSONInputMessage);
+                    Log.d("<Przyszło z serwera>=============", JSONInputMessage);
                     //}
                     publishProgress(1);
 
@@ -155,12 +165,30 @@ public class TalkActivity extends ActionBarActivity {
         }
 
         protected void onProgressUpdate (Integer... values) {
+            /*try {
+                JSONObject jsonObject = new JSONObject(JSONInputMessage);
+                JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
+                if(jsonArray!=null) {                           // wywalic warunek jak bedzie dzialac
+
+//////////////////////////////////////////////////////////////////////
+                    //Message mess = new Message();
+                    //mess.message = jsonArray.getString(0);
+                    //messageArrayAdapter.add(mess);
+                    //////////////messageArrayAdapter.add(new Message(true, jsonArray.getString(0)));
+////////////////////////////////////////////////////////////////////
+                    //arrayAdapter.add(jsonArray.getString(0));   //zmiany w grafice muszą byc przeprowadzone tu, a nie w doInBackground
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }*/
             try {
                 JSONObject jsonObject = new JSONObject(JSONInputMessage);
                 JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
-                if(jsonArray!=null) {    // wywalic warunek jak bedzie dzialac
-                    arrayAdapter.add(jsonArray.getString(0)); //zmiany w grafice muszą byc przeprowadzone tu, a nie w doInBackground
-                }
+                String message = extras.getString("to")+": "+jsonArray.getString(0);
+                //arrayAdapter.add(s);
+                messageArrayAdapter.add(new Message(false, message));
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -173,12 +201,15 @@ public class TalkActivity extends ActionBarActivity {
             try {
                 JSONObject jsonObject = new JSONObject(JSONInputMessage);
                 JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
-                String s = extras.getString("to")+": "+jsonArray.getString(0);
-                arrayAdapter.add(s);
+                String message = extras.getString("to")+": "+jsonArray.getString(0);
+                //arrayAdapter.add(s);
+                messageArrayAdapter.add(new Message(false, message));
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            super.onPostExecute(result);
         }
     }
 
