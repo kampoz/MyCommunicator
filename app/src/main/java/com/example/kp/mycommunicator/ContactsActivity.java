@@ -56,6 +56,15 @@ public class ContactsActivity extends ActionBarActivity {
                 MainActivity.interlocutor = contacts.get(position);
             }
         });
+
+        bWyszukiwanie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSearchActivity();
+            }
+        });
+
+
     }
 
     @Override
@@ -77,5 +86,11 @@ public class ContactsActivity extends ActionBarActivity {
         Intent intent = new Intent (this, TalkActivity.class );
         intent.putExtra("to", to );
         startActivity(intent);
+    }
+
+    public void startSearchActivity(){
+        Intent intent = new Intent (this, SearchActivity.class );
+        startActivity(intent);
+        //System.exit(0);
     }
 }

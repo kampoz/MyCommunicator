@@ -68,10 +68,12 @@ public class RegistrationActivity extends ActionBarActivity {
                  }
                 else
                  {
-                //tu odpalić wątek obslugujący komunikacje przy rejestracji
+                //tworzony obiekt-wątek obslugujący komunikacje przy rejestracji
+                    Toast.makeText(getApplicationContext(),"Użytkownik jest rejestrowany...", Toast.LENGTH_SHORT).show();
                     RegisterThread registerThread = new RegisterThread();
                     registerThread.execute();
                  }
+
             }
         });
     }

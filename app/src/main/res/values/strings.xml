@@ -8,5 +8,6 @@
     <string name="title_activity_contacts">ContactsActivity</string>
     <string name="title_activity_registration">Registration</string>
     <string name="title_activity_registration_succed">RegistrationSuccedActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
 
 </resources>

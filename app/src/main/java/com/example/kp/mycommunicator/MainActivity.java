@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
         bLogin.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"Trwa logowanie...", Toast.LENGTH_SHORT).show();
                 username = userEt.getText().toString();
                 password = passwordEt.getText().toString();
                 CheckLoginThread checkLoginThread = new CheckLoginThread();
@@ -74,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
         protected Void doInBackground(Void... params) {
             try {
                 Socket s = new Socket(HOST, PORT);
-                BufferedWriter bufOut = new BufferedWriter( new OutputStreamWriter( s.getOutputStream() ) );
+                BufferedWriter bufOut = new BufferedWriter( new OutputStreamWriter( s.getOutputStream()));
                 //printWriter = new PrintWriter(s.getOutputStream(), true);
                 request = "{ \"action\": \"login\", \"user\": \""+username+"\", \"password\": \""+password+"\" }";
                 bufOut.write( request );

@@ -104,14 +104,11 @@ public class TalkActivity extends ActionBarActivity {
                 JSONOutputMessage = "{ \"action\": \"message\", \"from\": \""+login+"\"," +
                                     " \"to\": \""+extras.getString("to")+"\",  " +
                                     "\"contents\": \""+message+"\" }";
-
                 printWriter.println(JSONOutputMessage);
                 Log.d("================<CLIENT>", "JSON "+JSONOutputMessage+" wysłany!!!! na " + s);
                 br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 JSONInputMessage = br.readLine();       //to jest String
-
-                // <----------Można potwierdzić JSONem dostarczenie wiadomosci
-
+                                                                            // <----------Można potwierdzić JSONem dostarczenie wiadomosci
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -119,7 +116,6 @@ public class TalkActivity extends ActionBarActivity {
             }
             return null;
         }
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
