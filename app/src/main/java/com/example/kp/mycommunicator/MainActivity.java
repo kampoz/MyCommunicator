@@ -1,13 +1,16 @@
 package com.example.kp.mycommunicator;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -134,16 +137,13 @@ public class MainActivity extends ActionBarActivity {
     public void contactsActivity(){
         Intent intent = new Intent (this, ContactsActivity.class );
         startActivity(intent);
-    }
 
-    public void talkActivity(){
-        Intent intent = new Intent (this, TalkActivity.class );
-        startActivity(intent);
     }
 
     public void startRegistrationActivity(){
-        Intent intent = new Intent (this, Registration.class );
+        Intent intent = new Intent (this, RegistrationActivity.class );
         startActivity(intent);
+        System.exit(0);
     }
 
 

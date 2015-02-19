@@ -70,7 +70,7 @@ public class TalkActivity extends ActionBarActivity {
         listView.setAdapter(arrayAdapter);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         */
-////////////////////nowy adapter////////////////////////////////////////////////////////////////
+            //nowy adapter/////////
         messageArrayAdapter = new MessageArrayAdapter(getApplicationContext(),R.layout.activity_single_message );
         listView.setAdapter(messageArrayAdapter);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
@@ -101,7 +101,9 @@ public class TalkActivity extends ActionBarActivity {
                 Socket s = new Socket(HOST, PORT);
                 printWriter = new PrintWriter(s.getOutputStream(), true);
                 String login = UserInfo.getInstance().login;
-                JSONOutputMessage = "{ \"action\": \"message\", \"from\": \""+login+"\", \"to\": \""+extras.getString("to")+"\",  \"contents\": \""+message+"\" }";
+                JSONOutputMessage = "{ \"action\": \"message\", \"from\": \""+login+"\"," +
+                                    " \"to\": \""+extras.getString("to")+"\",  " +
+                                    "\"contents\": \""+message+"\" }";
 
                 printWriter.println(JSONOutputMessage);
                 Log.d("================<CLIENT>", "JSON "+JSONOutputMessage+" wysłany!!!! na " + s);
@@ -204,8 +206,6 @@ public class TalkActivity extends ActionBarActivity {
                 String message = extras.getString("to")+": "+jsonArray.getString(0);
                 //arrayAdapter.add(s);
                 messageArrayAdapter.add(new Message(false, message));
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }

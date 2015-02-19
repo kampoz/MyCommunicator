@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import java.util.ArrayList;
 
@@ -17,6 +18,7 @@ public class ContactsActivity extends ActionBarActivity {
 
     public static ArrayList<String> contacts;
     ListView listView;
+    Button bWyszukiwanie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,7 @@ public class ContactsActivity extends ActionBarActivity {
 
         contacts = new ArrayList<String>();
         //dodanie uzytkowników do listy uzytkowników w kliencie/telefonie
+        // TU WSTAWIC FUNKCJĘ MAJĄCA PĘTLE FOR ODCZUTUJĄCĄ JSONA Z KONTAKTAMI
         contacts.add("Kylo");
         contacts.add("Roman");
         contacts.add("kamil");
@@ -35,6 +38,7 @@ public class ContactsActivity extends ActionBarActivity {
             Log.d("-------------<CLIENT>Arraylist contacts, pole "+i+" ", contacts.get(i));
         }
 
+        bWyszukiwanie = (Button)findViewById(R.id.button2);
         listView = (ListView) findViewById(R.id.listView);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
@@ -51,8 +55,7 @@ public class ContactsActivity extends ActionBarActivity {
                 conversationActivity(contacts.get(position));
                 MainActivity.interlocutor = contacts.get(position);
             }
-        }
-        );
+        });
     }
 
     @Override

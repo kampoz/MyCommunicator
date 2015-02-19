@@ -24,7 +24,7 @@ import java.net.Socket;
 
 
 
-public class Registration extends ActionBarActivity {
+public class RegistrationActivity extends ActionBarActivity {
 
     private TextView tvLogin;
     private EditText etSetLogin;

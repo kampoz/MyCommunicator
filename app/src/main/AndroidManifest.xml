@@ -30,7 +30,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".Registration"
+            android:name=".RegistrationActivity"
             android:label="@string/title_activity_registration" >
         </activity>
         <activity
