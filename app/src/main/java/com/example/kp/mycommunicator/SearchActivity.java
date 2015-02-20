@@ -1,5 +1,6 @@
 package com.example.kp.mycommunicator;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -7,19 +8,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -30,10 +31,14 @@ public class SearchActivity extends ActionBarActivity {
 
     private ImageButton bSearch;
     private EditText editText;
-    private ListView listview;
+     ListView listView;
     private static final String HOST = "192.168.0.18";
     private static final int PORT = 7777;
     private ArrayList<String> users = new ArrayList<String>();
+    public static ArrayList<String> arrayResults = new ArrayList<String>();
+    private String searchResponse;
+    private ArrayAdapter arrayAdapter;
+    Context context = SearchActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +47,27 @@ public class SearchActivity extends ActionBarActivity {
 
         bSearch = (ImageButton)findViewById(R.id.buttonSearch);
         editText = (EditText)findViewById(R.id.editText7);
-        listview = (ListView)findViewById(R.id.listView3);
+        listView = (ListView)findViewById(R.id.listView3);
 
         bSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Wyszukiwanie...", Toast.LENGTH_SHORT).show();
                 RequestUsersSearch requestUsersSearch = new RequestUsersSearch();
                 requestUsersSearch.execute();
+
+                /*
+                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                        this,
+                        R.layout.contacts_list_view,
+                        arrayResults);
+                listView.setAdapter(arrayAdapter);
+                */
             }
         });
+
+
+
 
     }
 
@@ -95,36 +112,40 @@ public class SearchActivity extends ActionBarActivity {
 
                 printWriter = new PrintWriter(s.getOutputStream(), true);
                 printWriter.println(jsonObject.toString()); // write the request to output stream
-
-
                 BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                String searchResponse = br.readLine();
-                JSONObject jsonSearchResponse = new JSONObject(searchResponse);
+                searchResponse = br.readLine();
 
                 Log.d("------------< G E C C O  gecko gecco>  JSON-Odpowiedź z wynikami wyszukiwania:", searchResponse );
 
-                //rozpakowac jsona wg pól
-                //dodać wyniki, które mają byc w formie tablicy do arraya
-               //jsonObject.put("users", searchResults);
                 printWriter.close();
 
-                //String serverAction = (String)jsonObject.get("serverAction");
-                //JSONArray
-                //if (serverAction.equals("searchResults")){
-                    JSONArray JSONresults = (JSONArray)jsonSearchResponse.get("foundLogins");
-                    ArrayList<String> arrayResults = new ArrayList<String>();
+                JSONObject jsonSearchResponse = new JSONObject(searchResponse);
+                JSONArray JSONresults = (JSONArray)jsonSearchResponse.get("foundLogins");
+                //arrayResults = new ArrayList<String>();
 
-                    if (JSONresults != null) {
-                        for (int i=0;i<JSONresults.length();i++){
-                            arrayResults.add(JSONresults.get(i).toString());
-                        }
+                if (JSONresults != null) {
+                    for (int i=0;i<JSONresults.length();i++){
+                        arrayResults.add(JSONresults.get(i).toString());
                     }
-                    Log.d("------------< G E C C O  gecko gecco> Arraylista arrayResults", arrayResults.toString());
-                    //String foundLogin = (String) jsonObject.get("fou");           //WYPAKOWAC TABLICE JSONARRAY
-                //}
-                //else{
-                //    Log.d("------------< G E C C O  gecko gecco> Arraylista arrayResults", "Nie przetworzona jsonarray");
-                //}
+                }
+                Log.d("------------< G E C C O  gecko gecco> Arraylista arrayResults", arrayResults.toString());
+                if (arrayResults.size()==0){
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Nic nie znaleziono", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                else{
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Koniec wyszukiwania", Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+
+
+
 
 
             } catch (IOException e) {
@@ -134,5 +155,12 @@ public class SearchActivity extends ActionBarActivity {
             }
             return null;
         }
-    }
+
+        protected void onPostExecute(Void result) {
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.contacts_list_view, arrayResults);
+            listView.setAdapter(arrayAdapter);
+        }
+
+
+}
 }
