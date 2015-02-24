@@ -31,6 +31,8 @@ public class ContactsActivity extends ActionBarActivity {
         contacts.add("Kylo");
         contacts.add("Roman");
         contacts.add("kamil");
+        contacts.add("karol");
+        contacts.add("marzena");
 
         //wyswietlenie zawartości tablicy contacts
         for(int i = 0; i< contacts.size(); i++)
@@ -63,8 +65,6 @@ public class ContactsActivity extends ActionBarActivity {
                 startSearchActivity();
             }
         });
-
-
     }
 
     @Override

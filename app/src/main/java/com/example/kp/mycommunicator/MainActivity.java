@@ -26,14 +26,17 @@ public class MainActivity extends ActionBarActivity {
     private EditText passwordEt;
     private String request;
     private static final String HOST = "192.168.0.18";
+    //private static final String HOST = "192.168.0.11";
     private static final int PORT = 7777;
     private PrintWriter printWriter;
     private BufferedReader br;
+    //private BufferedInputStream br;
     String username = null;
     String password = null;
     String response = "Incorrect";
     String resp;
     public static String interlocutor;
+    private String log = "< GECCO GECKO >";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -53,11 +56,18 @@ public class MainActivity extends ActionBarActivity {
         bLogin.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
+                Time time = new Time();
+                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Kliknięcie bLogin");
                 Toast.makeText(getApplicationContext(),"Trwa logowanie...", Toast.LENGTH_SHORT).show();
+                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Wyswietlenie Toastu");
                 username = userEt.getText().toString();
+                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Pobranie tekstu z editText / username");
                 password = passwordEt.getText().toString();
+                    Log.d(log,time.getTime()+"<MainActivity><bLogin/OnClick> Pobranie tekstu z editText / password");
                 CheckLoginThread checkLoginThread = new CheckLoginThread();
+                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Nowy obiekt wątku CheckLoginThread");
                 checkLoginThread.execute();
+                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> checkLoginThread.execute();");
             }
         });
 
@@ -71,23 +81,42 @@ public class MainActivity extends ActionBarActivity {
 
     //wysyła request z logowaniem
     private class CheckLoginThread extends AsyncTask<Void, Void, Void> {
+        Time time = new Time();
+
         @Override
         protected Void doInBackground(Void... params) {
             try {
                 Socket s = new Socket(HOST, PORT);
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground> Logowanie: otwarcie socketu");
                 BufferedWriter bufOut = new BufferedWriter( new OutputStreamWriter( s.getOutputStream()));
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: Stworzenie BufferWriter");
                 //printWriter = new PrintWriter(s.getOutputStream(), true);
                 request = "{ \"action\": \"login\", \"user\": \""+username+"\", \"password\": \""+password+"\" }";
+
                 bufOut.write( request );
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: bufOut.write( request )");
                 bufOut.newLine();
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: bufOut.newLine()");
                 bufOut.flush();
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: Wysłanie jsona z użytkownikiem i hasłem; bufOut.flush()");
                 //printWriter.println(request);
                 //printWriter.flush();
-                Log.d("================<CLIENT>", "JSON wysłany!!!! na " + s);
-                br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                response = br.readLine();
-                Log.d(">><CLIENT> Odpowiedź serwera", response);
-                br.close();
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>JSON wysłany!!!! na " + s);
+                InputStream is =s.getInputStream();
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStreamReader isr>");
+                InputStreamReader isr = new InputStreamReader(is);
+                    Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStream is>");
+                BufferedReader br1 = new BufferedReader(isr);
+                    Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie BufferedReader br1>");
+
+                //br = new BufferedReader(new InputStreamReader(s.getInputStream())); <------TEGO ODKOMENTOWAC
+                //br = new BufferedReader(new InputStreamReader(new BufferedInputStream(s.getInputStream())));
+                        //Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Stworzenie BufferReader");
+                //response = br.readLine();
+                response = br1.readLine();
+                        Log.d(log ,time.getTime()+" <MainActivity/AsyncTask/doInBackground/br.readLine() "+response);
+                //br.close(); <----------------- to odkomentować
+                br1.close();
                 //printWriter.close();
                 s.close(); // zamykanie socketu, bo juz jest nieużywany wiecej
 

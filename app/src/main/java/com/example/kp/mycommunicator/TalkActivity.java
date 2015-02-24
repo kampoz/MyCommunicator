@@ -39,6 +39,7 @@ public class TalkActivity extends ActionBarActivity {
     private String JSONOutputMessage;
     private String JSONInputMessage;
     private static final String HOST = "192.168.0.18";
+    //private static final String HOST = "169.254.123.164";
     private static final int PORT = 7777;
     private BufferedReader br;
     private Bundle extras;
@@ -67,8 +68,8 @@ public class TalkActivity extends ActionBarActivity {
                 this,
                 R.layout.contacts_list_view,       //tu byly zmiany
                 messegesArray);
-        listView.setAdapter(arrayAdapter);
-        listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        lvSearchResults.setAdapter(arrayAdapter);
+        lvSearchResults.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         */
             //nowy adapter/////////
         messageArrayAdapter = new MessageArrayAdapter(getApplicationContext(),R.layout.activity_single_message );
@@ -106,8 +107,8 @@ public class TalkActivity extends ActionBarActivity {
                                     "\"contents\": \""+message+"\" }";
                 printWriter.println(JSONOutputMessage);
                 Log.d("================<CLIENT>", "JSON "+JSONOutputMessage+" wysłany!!!! na " + s);
-                br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                JSONInputMessage = br.readLine();       //to jest String
+                //br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                //JSONInputMessage = br.readLine();       //to jest String
                                                                             // <----------Można potwierdzić JSONem dostarczenie wiadomosci
             } catch (UnknownHostException e) {
                 e.printStackTrace();
@@ -139,7 +140,6 @@ public class TalkActivity extends ActionBarActivity {
                     printWriter = new PrintWriter(s.getOutputStream(), true);
                     String login = UserInfo.getInstance().login;
                     JSONOutputMessage = "{ \"action\": \"RequestMessages\", \"from\": \"" + extras.getString("to") + "\", \"to\": \"" + login + "\" }";
-
                     printWriter.println(JSONOutputMessage);
                     Log.d("================<Gecco>", "JSON Zapytanie o nieodebrane wiadomości " + JSONOutputMessage + " wysłany!!!! na " + s);
                     br = new BufferedReader(new InputStreamReader(s.getInputStream()));

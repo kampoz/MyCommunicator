@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -31,23 +32,26 @@ public class SearchActivity extends ActionBarActivity {
 
     private ImageButton bSearch;
     private EditText editText;
-     ListView listView;
+     ListView lvSearchResults;
     private static final String HOST = "192.168.0.18";
+    //private static final String HOST = "localhost";
     private static final int PORT = 7777;
     private ArrayList<String> users = new ArrayList<String>();
-    public static ArrayList<String> arrayResults = new ArrayList<String>();
+    public static ArrayList<String> arrayResults;
     private String searchResponse;
     private ArrayAdapter arrayAdapter;
     Context context = SearchActivity.this;
+    String log = " <Gecco> SearchActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        Time time = new Time();
 
         bSearch = (ImageButton)findViewById(R.id.buttonSearch);
         editText = (EditText)findViewById(R.id.editText7);
-        listView = (ListView)findViewById(R.id.listView3);
+        lvSearchResults = (ListView)findViewById(R.id.listView3);
 
         bSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,14 +62,23 @@ public class SearchActivity extends ActionBarActivity {
 
                 /*
                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                        this,
+                        context,
                         R.layout.contacts_list_view,
                         arrayResults);
-                listView.setAdapter(arrayAdapter);
+                lvSearchResults.setAdapter(arrayAdapter);
                 */
             }
         });
 
+        lvSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                Log.d(log, "Kliknięcie elemntu z listy lvSearchResults: "+ arrayResults.get(position));
+               // AddUserActivity(arrayResults.get(position)); <------- odblokować potem
+                MainActivity.interlocutor = arrayResults.get(position);
+            }
+        });
 
 
 
@@ -97,6 +110,8 @@ public class SearchActivity extends ActionBarActivity {
     private class RequestUsersSearch extends AsyncTask<Object, Integer, Void> {
         @Override
         protected Void doInBackground(Object... params) {
+
+            arrayResults = new ArrayList<String>();
 
             try {
                 Socket s = new Socket(HOST, PORT);
@@ -158,7 +173,8 @@ public class SearchActivity extends ActionBarActivity {
 
         protected void onPostExecute(Void result) {
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.contacts_list_view, arrayResults);
-            listView.setAdapter(arrayAdapter);
+            lvSearchResults.setAdapter(arrayAdapter);
+            arrayResults = null;
         }
 
 
