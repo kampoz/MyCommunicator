@@ -37,7 +37,7 @@ public class SearchActivity extends ActionBarActivity {
     //private static final String HOST = "localhost";
     private static final int PORT = 7777;
     private ArrayList<String> users = new ArrayList<String>();
-    public static ArrayList<String> arrayResults;
+    public static ArrayList<String> arrayResults = new ArrayList<String>();
     private String searchResponse;
     private ArrayAdapter arrayAdapter;
     Context context = SearchActivity.this;
@@ -69,18 +69,22 @@ public class SearchActivity extends ActionBarActivity {
                 */
             }
         });
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
         lvSearchResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 Log.d(log, "Kliknięcie elemntu z listy lvSearchResults: "+ arrayResults.get(position));
-               // AddUserActivity(arrayResults.get(position)); <------- odblokować potem
-                MainActivity.interlocutor = arrayResults.get(position);
+
+                CustomDialogClass cdd = new CustomDialogClass(SearchActivity.this);
+                cdd.show();
+                Log.d(log, "Otwarcie okna dialogowego: Dodać kontakt?");
+                // AddUserActivity(arrayResults.get(position)); <------- odblokować potem??
+                //MainActivity.interlocutor = arrayResults.get(position);
             }
         });
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     }
 
@@ -174,7 +178,7 @@ public class SearchActivity extends ActionBarActivity {
         protected void onPostExecute(Void result) {
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, R.layout.contacts_list_view, arrayResults);
             lvSearchResults.setAdapter(arrayAdapter);
-            arrayResults = null;
+            //arrayResults = null;
         }
 
 

@@ -105,9 +105,9 @@ public class MainActivity extends ActionBarActivity {
                 InputStream is =s.getInputStream();
                         Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStreamReader isr>");
                 InputStreamReader isr = new InputStreamReader(is);
-                    Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStream is>");
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStream is>");
                 BufferedReader br1 = new BufferedReader(isr);
-                    Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie BufferedReader br1>");
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie BufferedReader br1>");
 
                 //br = new BufferedReader(new InputStreamReader(s.getInputStream())); <------TEGO ODKOMENTOWAC
                 //br = new BufferedReader(new InputStreamReader(new BufferedInputStream(s.getInputStream())));

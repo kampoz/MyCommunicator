@@ -19,6 +19,7 @@ public class ContactsActivity extends ActionBarActivity {
     public static ArrayList<String> contacts;
     ListView listView;
     Button bWyszukiwanie;
+    private String log = "<Gecco> ContactsActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class ContactsActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                Log.d("<CLIENT>Kliknięto pozycje : ", contacts.get(position));
+                Log.d(log, "<CLIENT>Kliknięto pozycje : "+contacts.get(position));
                 conversationActivity(contacts.get(position));
                 MainActivity.interlocutor = contacts.get(position);
             }
