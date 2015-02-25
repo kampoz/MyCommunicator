@@ -1,16 +1,13 @@
 package com.example.kp.mycommunicator;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,11 +23,9 @@ public class MainActivity extends ActionBarActivity {
     private EditText passwordEt;
     private String request;
     private static final String HOST = "192.168.0.18";
-    //private static final String HOST = "192.168.0.11";
     private static final int PORT = 7777;
     private PrintWriter printWriter;
     private BufferedReader br;
-    //private BufferedInputStream br;
     String username = null;
     String password = null;
     String response = "Incorrect";
@@ -124,7 +119,7 @@ public class MainActivity extends ActionBarActivity {
                 {
                     UserInfo userInfo = UserInfo.getInstance();
                     userInfo.login = userEt.getText().toString();
-                    contactsActivity();
+                    startContactsActivity(username);
                 }
                 else
                 {
@@ -164,8 +159,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void contactsActivity(){
+    public void startContactsActivity(String username){
         Intent intent = new Intent (this, ContactsActivity.class );
+        intent.putExtra("login", username );
         startActivity(intent);
 
     }

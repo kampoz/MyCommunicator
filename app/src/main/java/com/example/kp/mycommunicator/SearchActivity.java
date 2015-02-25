@@ -1,6 +1,7 @@
 package com.example.kp.mycommunicator;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -42,12 +43,18 @@ public class SearchActivity extends ActionBarActivity {
     private ArrayAdapter arrayAdapter;
     Context context = SearchActivity.this;
     String log = " <Gecco> SearchActivity";
+    private Bundle extras;
+    String login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         Time time = new Time();
+
+        Intent intent = getIntent();
+        extras = intent.getExtras();
+        login = extras.getString("login");
 
         bSearch = (ImageButton)findViewById(R.id.buttonSearch);
         editText = (EditText)findViewById(R.id.editText7);
@@ -75,8 +82,9 @@ public class SearchActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 Log.d(log, "Kliknięcie elemntu z listy lvSearchResults: "+ arrayResults.get(position));
+                String user = arrayResults.get(position); //<--- to przekazac do extras i potem do CustomDialogClass
+                CustomDialogClass cdd = new CustomDialogClass(SearchActivity.this, user, login);
 
-                CustomDialogClass cdd = new CustomDialogClass(SearchActivity.this);
                 cdd.show();
                 Log.d(log, "Otwarcie okna dialogowego: Dodać kontakt?");
                 // AddUserActivity(arrayResults.get(position)); <------- odblokować potem??
@@ -162,11 +170,6 @@ public class SearchActivity extends ActionBarActivity {
                         }
                     });
                 }
-
-
-
-
-
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -180,7 +183,5 @@ public class SearchActivity extends ActionBarActivity {
             lvSearchResults.setAdapter(arrayAdapter);
             //arrayResults = null;
         }
-
-
 }
 }

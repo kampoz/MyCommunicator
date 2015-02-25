@@ -19,12 +19,21 @@ public class ContactsActivity extends ActionBarActivity {
     public static ArrayList<String> contacts;
     ListView listView;
     Button bWyszukiwanie;
-    private String log = "<Gecco> ContactsActivity";
+    private String log = "<Gecco> /ContactsActivity";
+    private Bundle extras;
+    String login;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
+
+        Intent intent = getIntent();
+        extras = intent.getExtras();
+        login = extras.getString("login");
+            Log.d(log, "Zalogowany jako (dane z extras)"+login);
 
         contacts = new ArrayList<String>();
         //dodanie uzytkowników do listy uzytkowników w kliencie/telefonie
@@ -32,7 +41,7 @@ public class ContactsActivity extends ActionBarActivity {
         contacts.add("Kylo");
         contacts.add("Roman");
         contacts.add("kamil");
-        contacts.add("karol");
+        //contacts.add("karol");
         contacts.add("marzena");
 
         //wyswietlenie zawartości tablicy contacts
@@ -63,7 +72,7 @@ public class ContactsActivity extends ActionBarActivity {
         bWyszukiwanie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startSearchActivity();
+                startSearchActivity(login);
             }
         });
     }
@@ -89,8 +98,9 @@ public class ContactsActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
-    public void startSearchActivity(){
+    public void startSearchActivity(String login){
         Intent intent = new Intent (this, SearchActivity.class );
+        intent.putExtra("login", login );
         startActivity(intent);
         //System.exit(0);
     }
