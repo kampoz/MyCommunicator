@@ -31,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
     String response = "Incorrect";
     String resp;
     public static String interlocutor;
-    private String log = "< GECCO GECKO >";
+    private String log = "<Gecco>";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -58,11 +58,12 @@ public class MainActivity extends ActionBarActivity {
                 username = userEt.getText().toString();
                     Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Pobranie tekstu z editText / username");
                 password = passwordEt.getText().toString();
-                    Log.d(log,time.getTime()+"<MainActivity><bLogin/OnClick> Pobranie tekstu z editText / password");
+                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Pobranie tekstu z editText / password");
                 CheckLoginThread checkLoginThread = new CheckLoginThread();
                     Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Nowy obiekt wątku CheckLoginThread");
                 checkLoginThread.execute();
-                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> checkLoginThread.execute();");
+                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> checkLoginThread.execute();\n" +
+                            "=================================================================================================");
             }
         });
 
@@ -102,15 +103,16 @@ public class MainActivity extends ActionBarActivity {
                 InputStreamReader isr = new InputStreamReader(is);
                         Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStream is>");
                 BufferedReader br1 = new BufferedReader(isr);
-                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie BufferedReader br1>");
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie BufferedReader br1>\n" +
+                                "--------------------------------------------------------------------------------------------------");
 
-                //br = new BufferedReader(new InputStreamReader(s.getInputStream())); <------TEGO ODKOMENTOWAC
+                //br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 //br = new BufferedReader(new InputStreamReader(new BufferedInputStream(s.getInputStream())));
                         //Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Stworzenie BufferReader");
                 //response = br.readLine();
                 response = br1.readLine();
                         Log.d(log ,time.getTime()+" <MainActivity/AsyncTask/doInBackground/br.readLine() "+response);
-                //br.close(); <----------------- to odkomentować
+                //br.close();
                 br1.close();
                 //printWriter.close();
                 s.close(); // zamykanie socketu, bo juz jest nieużywany wiecej
@@ -171,9 +173,6 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
         System.exit(0);
     }
-
-
-
 }
 
 

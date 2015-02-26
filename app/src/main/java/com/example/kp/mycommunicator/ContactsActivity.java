@@ -1,6 +1,7 @@
 package com.example.kp.mycommunicator;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,16 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 
 
@@ -22,7 +33,8 @@ public class ContactsActivity extends ActionBarActivity {
     private String log = "<Gecco> /ContactsActivity";
     private Bundle extras;
     String login;
-
+    private static final String HOST = "192.168.0.18";
+    private static final int PORT = 7777;
 
 
     @Override
@@ -43,6 +55,9 @@ public class ContactsActivity extends ActionBarActivity {
         contacts.add("kamil");
         //contacts.add("karol");
         contacts.add("marzena");
+
+        GetContactsList getContactsList = new GetContactsList();
+        getContactsList.execute();
 
         //wyswietlenie zawartości tablicy contacts
         for(int i = 0; i< contacts.size(); i++)
@@ -76,6 +91,57 @@ public class ContactsActivity extends ActionBarActivity {
             }
         });
     }
+
+    //POPRAWIĆ NAZWY ARRAYLIST CONTACTS I CONTACTSLIST, BO SIE NIE DA KLIKAĆ W LISTĘ KONTAKTÓW PRZEZ RÓZNE NAZWY!!!!!!!
+    private class GetContactsList extends AsyncTask<Void, Void, Void> {
+
+        ArrayList<String> contactsList;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                Socket s = new Socket(HOST, PORT);
+                JSONObject jOut = new JSONObject();
+                jOut.put("action", "getContactsList");
+                jOut.put("user", login);
+                String request = jOut.toString();
+                PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
+                printWriter.println(request);
+                printWriter.flush();
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                String Input = br.readLine();
+                JSONObject jInput = new JSONObject(Input);
+                String serverAction = (String)jInput.get("serverAction");
+                contacts = null;
+                if (serverAction.equals("sendContactsList")){
+                    JSONArray jContactsList = (JSONArray) jInput.get("contactsList");
+                    contactsList = new ArrayList<String>();
+                    //zamiana jsonarray na ArrayList<String>
+                    if (jContactsList != null) {
+                        for (int i=0;i<jContactsList.length();i++){
+                            contactsList.add(jContactsList.get(i).toString());
+
+                        }
+                    }
+                    Log.d(log, " Lista kontaktów contactsList: "+contactsList);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void result) {
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.contacts_list_view, contactsList);
+            listView.setAdapter(arrayAdapter);
+
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
