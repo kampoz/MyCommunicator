@@ -1,6 +1,5 @@
 package com.example.kp.mycommunicator;
 
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,30 +15,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MessageArrayAdapter extends ArrayAdapter<Message>{
-
     private TextView chatText;
     private Context context;
     private List<Message> itemsArrayList = new ArrayList<>();
     private LinearLayout singleMessageContainer;
 
     @Override
-    public void add(Message object) {
+    public void add(Message object) {               //nadpisanie metody add
         itemsArrayList.add(object);                //dodanie do arraylisty obiektu ChatMessage
         super.add(object);
     }
 
+    //konstruktor
     public MessageArrayAdapter(Context context, int textViewResourceId) {
         super(context, R.layout.activity_single_message, textViewResourceId);
     }
 
-    @Override
+    @Override                                  //nadpisanie metody getView
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         if (row == null)
         {
-            //LayoutInflater służy do dynamicznego ładowania layoutu
+                //LayoutInflater służy do dynamicznego ładowania layoutu
             LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            //określa widok pojedynczego rzędu
+                //określa widok pojedynczego rzędu
             row = inflater.inflate(R.layout.activity_single_message, parent, false);
         }
         singleMessageContainer = (LinearLayout) row.findViewById(R.id.singleMessageContainer);  //??? LinearLayout z xml

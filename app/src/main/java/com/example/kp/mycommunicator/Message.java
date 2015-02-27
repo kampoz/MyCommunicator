@@ -1,8 +1,5 @@
 package com.example.kp.mycommunicator;
 
-/**
- * Created by kp on 2015-02-17.
- */
 public class Message {
     public boolean left;
     public String message;
