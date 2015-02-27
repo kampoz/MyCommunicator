@@ -60,14 +60,6 @@ public class ContactsActivity extends ActionBarActivity {
         GetContactsList getContactsList = new GetContactsList();
         getContactsList.execute();
 
-        /*
-        //wyswietlenie zawartości tablicy contacts
-        for(int i = 0; i< contacts.size(); i++)
-        {
-            Log.d("-------------<CLIENT>Arraylist contacts, pole "+i+" ", contacts.get(i));
-        }
-        */
-
         bWyszukiwanie = (Button)findViewById(R.id.button2);
         listView = (ListView) findViewById(R.id.listView);
         Toast.makeText(getApplicationContext(), "Wczytywanie kontaktów...", Toast.LENGTH_LONG).show();
@@ -98,11 +90,8 @@ public class ContactsActivity extends ActionBarActivity {
         });
     }
 
-    //POPRAWIĆ NAZWY ARRAYLIST CONTACTS I CONTACTSLIST, BO SIE NIE DA KLIKAĆ W LISTĘ KONTAKTÓW PRZEZ RÓZNE NAZWY!!!!!!!
     private class GetContactsList extends AsyncTask<Void, Void, Void> {
-
         ArrayList<String> contactsList;
-
 
         @Override
         protected Void doInBackground(Void... params) {

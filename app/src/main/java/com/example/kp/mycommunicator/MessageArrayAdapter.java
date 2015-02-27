@@ -28,7 +28,8 @@ public class MessageArrayAdapter extends ArrayAdapter<Message>{
 
     //konstruktor
     public MessageArrayAdapter(Context context, int textViewResourceId) {
-        super(context, R.layout.activity_single_message, textViewResourceId);
+        super(context, R.layout.activity_single_message, textViewResourceId);   // wywołanie konstruktora nadrzędnego ArrayAdapter
+                                                                                // z pojedynczym layoutem activity_single_message
     }
 
     @Override                                  //nadpisanie metody getView

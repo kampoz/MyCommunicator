@@ -75,7 +75,7 @@ public class TalkActivity extends ActionBarActivity {
         messageArrayAdapter = new MessageArrayAdapter(getApplicationContext(),R.layout.activity_single_message );
         listView.setAdapter(messageArrayAdapter);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-////////////////////////////////////////////////////////////////////////////////////////////
+
         RequestUnsentMessages requestUnsentMessages = new RequestUnsentMessages();
         requestUnsentMessages.execute();
 
@@ -122,7 +122,7 @@ public class TalkActivity extends ActionBarActivity {
             super.onPreExecute();
             //arrayAdapter.add("Ja: "+message);
             //messageArrayAdapter.chatText.add("Ja: "+message);
-            messageArrayAdapter.add(new Message(true, message));
+            messageArrayAdapter.add(new Message(true, message));        //dodanie wiadomości usera do Adaptera
         }
 
         protected void onPostExecute(Void result) {
@@ -138,7 +138,8 @@ public class TalkActivity extends ActionBarActivity {
                     Socket s = new Socket(HOST, PORT);
                     printWriter = new PrintWriter(s.getOutputStream(), true);
                     String login = UserInfo.getInstance().login;
-                    JSONOutputMessage = "{ \"action\": \"RequestMessages\", \"from\": \"" + extras.getString("to") + "\", \"to\": \"" + login + "\" }";
+                    JSONOutputMessage = "{ \"action\": \"RequestMessages\", \"from\": \""
+                            + extras.getString("to") + "\", \"to\": \"" + login + "\" }";
                     printWriter.println(JSONOutputMessage);
                     Log.d(log, "/AsyncTask - RequestUnsentMessages/PrintWriter: " + JSONOutputMessage + "\n wysłany!!!! na " + s);
                     br = new BufferedReader(new InputStreamReader(s.getInputStream()));
