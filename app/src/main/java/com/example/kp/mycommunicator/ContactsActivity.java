@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -69,6 +70,7 @@ public class ContactsActivity extends ActionBarActivity {
 
         bWyszukiwanie = (Button)findViewById(R.id.button2);
         listView = (ListView) findViewById(R.id.listView);
+        Toast.makeText(getApplicationContext(), "Wczytywanie kontaktów...", Toast.LENGTH_LONG).show();
         /*
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
