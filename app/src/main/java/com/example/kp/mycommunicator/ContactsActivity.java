@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class ContactsActivity extends ActionBarActivity {
 
-    public static ArrayList<String> contacts;
+    public ArrayList<String> contacts;
     ListView listView;
     Button bWyszukiwanie;
     private String log = "<Gecco> /ContactsActivity";
@@ -59,14 +59,17 @@ public class ContactsActivity extends ActionBarActivity {
         GetContactsList getContactsList = new GetContactsList();
         getContactsList.execute();
 
+        /*
         //wyswietlenie zawartości tablicy contacts
         for(int i = 0; i< contacts.size(); i++)
         {
             Log.d("-------------<CLIENT>Arraylist contacts, pole "+i+" ", contacts.get(i));
         }
+        */
 
         bWyszukiwanie = (Button)findViewById(R.id.button2);
         listView = (ListView) findViewById(R.id.listView);
+        /*
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 R.layout.contacts_list_view,
@@ -83,6 +86,7 @@ public class ContactsActivity extends ActionBarActivity {
                 MainActivity.interlocutor = contacts.get(position);
             }
         });
+        */
 
         bWyszukiwanie.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +100,7 @@ public class ContactsActivity extends ActionBarActivity {
     private class GetContactsList extends AsyncTask<Void, Void, Void> {
 
         ArrayList<String> contactsList;
+
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -136,8 +141,18 @@ public class ContactsActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(Void result) {
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.contacts_list_view, contactsList);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
+                    R.layout.contacts_list_view, contactsList);
             listView.setAdapter(arrayAdapter);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                {
+                    Log.d(log, "<CLIENT>Kliknięto pozycje : "+contactsList.get(position));
+                    conversationActivity(contactsList.get(position));
+                    MainActivity.interlocutor = contactsList.get(position);
+                }
+            });
 
         }
     }
