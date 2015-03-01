@@ -146,11 +146,11 @@ public class TalkActivity extends ActionBarActivity {
                     JSONInputMessage = br.readLine();
 
                     //if(JSONInputMessage!=null) {
-                    Log.d(log, "/AsyncTask - RequestUnsentMessages/BufferedReader:  "+JSONInputMessage);
+                    Log.d(log, "/AsyncTask-RequestUnsentMessages/BufferedReader:  "+JSONInputMessage);
                     //}
                     publishProgress(1);
 
-                    //Thread.sleep(1000);
+                    //Thread.sleep(300);
                     br.close();
                     s.close();
 
@@ -162,7 +162,7 @@ public class TalkActivity extends ActionBarActivity {
             }
         }
 
-        protected void onProgressUpdate (Integer... values) {
+        protected void onProgressUpdate (Integer... values) {       //TA METODA CHYBA DO USUNIĘCIA, BO JEST ONPOSTEXECUTE!!!!
             /*try {
                 JSONObject jsonObject = new JSONObject(JSONInputMessage);
                 JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
@@ -180,6 +180,7 @@ public class TalkActivity extends ActionBarActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }*/
+
             try {
                 JSONObject jsonObject = new JSONObject(JSONInputMessage);
                 JSONArray jsonArray = (JSONArray)jsonObject.get("messages");

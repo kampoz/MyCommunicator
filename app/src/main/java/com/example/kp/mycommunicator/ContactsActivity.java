@@ -60,6 +60,9 @@ public class ContactsActivity extends ActionBarActivity {
         GetContactsList getContactsList = new GetContactsList();
         getContactsList.execute();
 
+        OnlineStatus onlineStatus = new OnlineStatus();
+        onlineStatus.execute();
+
         bWyszukiwanie = (Button)findViewById(R.id.button2);
         listView = (ListView) findViewById(R.id.listView);
         Toast.makeText(getApplicationContext(), "Wczytywanie kontaktów...", Toast.LENGTH_LONG).show();
@@ -145,6 +148,37 @@ public class ContactsActivity extends ActionBarActivity {
                 }
             });
 
+        }
+    }
+
+    private class OnlineStatus extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            Time time = new Time();
+            try {
+                while(true)
+                {
+                    Socket s = new Socket(HOST, PORT);
+                    JSONObject jOut = new JSONObject();
+                    jOut.put("action", "onlineStatus");
+                    jOut.put("user", login);
+                    String request = jOut.toString();
+
+                    PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
+                    printWriter.println(request);
+                    printWriter.flush();
+                    Log.d(log,time.getTime()+ " AsyncTask/OnlineStatus. JSON wysłany "+request);
+                    Thread.sleep(5000);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 

@@ -63,7 +63,7 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Nowy obiekt wątku CheckLoginThread");
                 checkLoginThread.execute();
                     Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> checkLoginThread.execute();\n" +
-                            "=================================================================================================");
+                            "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
             }
         });
 

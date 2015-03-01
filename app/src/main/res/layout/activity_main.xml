@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/imageView"
-        android:src="@drawable/gecco"
+        android:src="@drawable/logo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
     />
@@ -57,9 +57,10 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="60dp"
-        android:text="Zaloguj"
+        android:text="ZALOGUJ"
+        android:textStyle="bold"
         android:id="@+id/button"
-        android:background="#BDBDBD"
+        android:background="#02556a"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/editText2"
         android:layout_centerHorizontal="true"
@@ -74,7 +75,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="10dp"
-        android:background="#ffffff"
-        android:textColor="#BDBDBD"/>
+        android:background="#caf2fc"
+        android:textColor="#767777"/>
 
 </RelativeLayout>
