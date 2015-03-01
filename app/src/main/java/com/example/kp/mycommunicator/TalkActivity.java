@@ -187,8 +187,6 @@ public class TalkActivity extends ActionBarActivity {
                 String message = extras.getString("to")+": "+jsonArray.getString(0);
                 //arrayAdapter.add(s);
                 messageArrayAdapter.add(new Message(false, message));
-
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
