@@ -1,17 +1,26 @@
 package com.example.kp.mycommunicator;
 
 public class Contact {
-    public boolean online;
-    public String name;
-    public boolean areThereMessages;
+    public Boolean online;
+    public String name = "hkjhkj ";
+    public Boolean areThereMessages;
 
     public Contact(){
+        this.online = false;
+        this.name = "Default";
+        this.areThereMessages = false;
     }
 
-    public Contact(boolean online, String name, boolean areThereMessages) {
+    public Contact(Boolean online, String name, Boolean areThereMessages) {
         super();
         this.online = online;
         this.name = name;
         this.areThereMessages = areThereMessages;
+    }
+
+
+    @Override
+    public String toString() {
+        return ("["+online.toString()+" "+name+" "+areThereMessages.toString()+"}");
     }
 }

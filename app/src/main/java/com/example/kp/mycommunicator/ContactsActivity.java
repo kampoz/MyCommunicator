@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -24,11 +25,11 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ContactsActivity extends ActionBarActivity {
 
-    public ArrayList<String> contacts;
     ListView listView;
     Button bWyszukiwanie;
     private String log = "<Gecco> /ContactsActivity";
@@ -36,6 +37,9 @@ public class ContactsActivity extends ActionBarActivity {
     String login;
     private static final String HOST = "192.168.0.18";
     private static final int PORT = 7777;
+    String Input = " ";
+    private List<Contact> contactsList = new ArrayList<>();
+    private ContactsArrayAdapter contactsArrayAdapter;
 
 
     @Override
@@ -43,31 +47,36 @@ public class ContactsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contacts);
 
+        contactsArrayAdapter = new ContactsArrayAdapter(this, contactsList);
+
+
+
         Intent intent = getIntent();
         extras = intent.getExtras();
         login = extras.getString("login");
             Log.d(log, "Zalogowany jako (dane z extras)"+login);
 
-        contacts = new ArrayList<String>();
-        //dodanie uzytkowników do listy uzytkowników w kliencie/telefonie
-        // TU WSTAWIC FUNKCJĘ MAJĄCA PĘTLE FOR ODCZUTUJĄCĄ JSONA Z KONTAKTAMI
-        contacts.add("Kylo");
-        contacts.add("Roman");
-        contacts.add("kamil");
-        //contacts.add("karol");
-        contacts.add("marzena");
+        //GetContactsList getContactsList = new GetContactsList();              //Stara klasa z kontaktsmi
+        //getContactsList.execute();
 
-        GetContactsList getContactsList = new GetContactsList();
-        getContactsList.execute();
+        GetContacts getContacts = new GetContacts();                            //nowa klasa z kontaktami i nowym adapterem
+        getContacts.execute();
 
+        //Klasa tworzy wątek ustaw. status usera na online na serwerze, wysyłapotwierdzenie online co kilka sekund
         OnlineStatus onlineStatus = new OnlineStatus();
         onlineStatus.execute();
 
         bWyszukiwanie = (Button)findViewById(R.id.button2);
         listView = (ListView) findViewById(R.id.listView);
         Toast.makeText(getApplicationContext(), "Wczytywanie kontaktów...", Toast.LENGTH_LONG).show();
+
+        //contactsArrayAdapter = new ContactsArrayAdapter(getApplicationContext(),R.layout.single_contact_view);
+
+        listView.setAdapter(contactsArrayAdapter);
+        listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+
         /*
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(           //stary prosty adapter
                 this,
                 R.layout.contacts_list_view,
                 contacts);
@@ -113,7 +122,7 @@ public class ContactsActivity extends ActionBarActivity {
                 String Input = br.readLine();
                 JSONObject jInput = new JSONObject(Input);
                 String serverAction = (String)jInput.get("serverAction");
-                contacts = null;
+                //contacts = null;
                 if (serverAction.equals("sendContactsList")){
                     JSONArray jContactsList = (JSONArray) jInput.get("contactsList");
                     contactsList = new ArrayList<String>();
@@ -150,6 +159,142 @@ public class ContactsActivity extends ActionBarActivity {
 
         }
     }
+
+    private class GetContacts extends AsyncTask<Object, Integer, Void> {         //nowy wątek do pobierania konataktów
+
+        Time time = new Time();
+        @Override
+        protected Void doInBackground(Object... params) {
+
+            try {
+                Socket s = new Socket(HOST, PORT);
+                JSONObject jOut = new JSONObject();
+                jOut.put("action", "actualizeContacts");
+                jOut.put("user", login);
+                String request = jOut.toString();
+                PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
+                    Log.d(log, time.getTime()+" /AsyncTask GetContacts/ "+jOut.toString() );
+                printWriter.println(request);
+                printWriter.flush();
+                    Log.d(log, time.getTime()+" /AsyncTask GetContacts/PrintWriter ");
+
+                BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                    Log.d(log, time.getTime()+" /AsyncTask GetContacts/Bufferreader ");
+                Input = br.readLine();
+                    Log.d(log, time.getTime()+" /AsyncTask GetContacts/ Input "+Input);
+                //JSONObject jInput = new JSONObject(Input);
+
+                publishProgress(1);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        /*
+        protected void onProgressUpdate (Integer... values) {
+            boolean online =  false;
+            boolean unsedMessage = false;
+            try {
+
+                JSONObject jInput = new JSONObject(Input);
+                String serverAction = (String)jInput.get("serverAction");
+                //dopisać jezeli if serverAction equals...
+                JSONArray jContactsArray = (JSONArray)jInput.get("contacts");
+                //Wypakowac tablicę jsonarray contacts i dodać w pętli do adaptera poszczególne elementy!!!!!!
+                for (int i=0; i<jContactsArray.length(); i++ ){
+                    JSONObject jRow = (JSONObject) jContactsArray.get(i);
+                    Log.d(log, time.getTime()+" jRow "+jRow.toString());
+                    String onlineInfo = (String) jRow.get("online");
+                    String contactName = (String) jRow.get("name");
+                    String unsendMessagesInfo = (String) jRow.get("unsendMessages");
+
+                    if(onlineInfo.equals("true")){
+                        online = true;
+                    }else if(onlineInfo.equals("false")){
+                        online = false;
+                    }
+
+                    if(unsendMessagesInfo.equals("true")){
+                        unsedMessage = true;
+                    }else if(unsendMessagesInfo.equals("false")){
+                        unsedMessage = false;
+
+                        contactsArrayAdapter.add(new Contact(online, contactName, unsedMessage));
+                    }
+                }
+
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            super.onProgressUpdate(values);
+        }
+        */
+
+
+        protected void onPostExecute(Void result) {
+
+            boolean online =  false;
+            boolean unsedMessage = false;
+            String contactName = "";
+
+
+
+            try {
+
+                JSONObject jInput = new JSONObject(Input);
+                String serverAction = (String)jInput.get("serverAction");
+                //dopisać jezeli if serverAction equals...
+                JSONArray jContactsArray = (JSONArray)jInput.get("contacts");
+                //Wypakowac tablicę jsonarray contacts i dodać w pętli do adaptera poszczególne elementy!!!!!!
+                for (int i=0; i<jContactsArray.length(); i++ )
+                {
+                    JSONObject jRow = (JSONObject) jContactsArray.get(i);
+                        Log.d(log, time.getTime()+" jRow "+jRow.toString());
+                    String onlineInfo = (String) jRow.get("online");
+                    contactName = (String) jRow.get("name");
+                    String unsendMessagesInfo = (String) jRow.get("unsendMessages");
+
+
+                    if(onlineInfo.equals("true")){
+                        online = true;
+                    }else if(onlineInfo.equals("false")){
+                        online = false;
+                    }
+
+                    if(unsendMessagesInfo.equals("true")){
+                        unsedMessage = true;
+                    }else if(unsendMessagesInfo.equals("false")){
+                        unsedMessage = false;
+
+                    }
+
+                    //contactsList.add(new Contact(true, "coś tam", false));
+                    contactsArrayAdapter.add(new Contact(online, contactName, unsedMessage));
+
+                    Log.d(log, time.getTime()+" >>>>>>>>>contactsArrayAdapter.add contact domyślny");
+
+                }
+                //contactsArrayAdapter = new ContactsArrayAdapter(getApplicationContext(),contactsList);
+                //contactsArrayAdapter.addAll(contactsList);
+                Log.d(log, time.getTime()+" Cała tablica dodana do adaptera: "+contactsList.toString());
+
+
+                }catch (JSONException e) {
+                e.printStackTrace();
+                }
+
+
+            super.onPostExecute(result);
+
+        }
+
+    }
+
 
     private class OnlineStatus extends AsyncTask<Void, Void, Void> {
         @Override

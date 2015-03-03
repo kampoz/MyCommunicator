@@ -2,6 +2,9 @@ package com.example.kp.mycommunicator;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,44 +23,71 @@ public class ContactsArrayAdapter extends ArrayAdapter<Contact> {
     private ImageView ivRedGreen;
     private ImageView ivEnvelope;
 
-    private List<Contact> itemsArrayList = new ArrayList<>();
+
+    private Context context;
+    public List<Contact> itemsArrayList;
     private LinearLayout singleContactContainer;
+    //Contact listContact= new Contact();
 
-
+/*
     @Override
-    public void add(Contact object) {               //nadpisanie metody add
-        itemsArrayList.add(object);                //dodanie do arraylisty obiektu ChatMessage
-        super.add(object);
-        }
-
-    //KONTRUKTOR
-    public ContactsArrayAdapter(Context context, int textViewResourceId) {
-        super(context, R.layout.contacts_list_view, textViewResourceId);   // wywołanie konstruktora nadrzędnego ArrayAdapter
+         public void add(Contact contact) {               //nadpisanie metody add
+        itemsArrayList.add(contact);                //dodanie do arraylisty obiektu Contact
+        super.add(contact);
+    }
+*/
+    @Override
+    public void add(Contact contact) {               //nadpisanie metody add
+        itemsArrayList.add(contact);                //dodanie do arraylisty obiektu Contact
+        super.add(contact);
     }
 
-    @Override                                  //nadpisanie metody getView
+    //KONTRUKTOR
+    //public ContactsArrayAdapter(Context context, textViewResourceId)
+    //super(context, textViewResourceId);
+    public ContactsArrayAdapter(Context context, List<Contact> itemsArrayList) {
+        //super(context, R.layout.contacts_list_view, textViewResourceId);
+           super(context, R.layout.contacts_list_view, itemsArrayList);
+           this.context = context;
+           this.itemsArrayList = itemsArrayList;
+           Log.d("KONTRUKTOR ADAPTERA", "konstruktor sie wykonał");
+    }
+
+    public int getCount() {                             //zwraca rozmiar arraya
+        return this.itemsArrayList.size();
+    }
+    public Contact getItem(int index) {             //zwraca konkretny obiekt
+        return this.itemsArrayList.get(index);
+    }
+
+    @Override                                  //zwraca widok pojedynczego elementu
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         if (row == null) {
-
+            Log.d("ADAPTER met. getView() ", "rozpoczęta");
             LayoutInflater inflater = (LayoutInflater) this.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            row = inflater.inflate(R.layout.activity_single_message, parent, false);
+            row = inflater.inflate(R.layout.single_contact_view, parent, false);
         }
         singleContactContainer = (LinearLayout) row.findViewById(R.id.singleContactContainer);
-        Contact listContact = getItem(position);
-        tvContactName = (TextView)row.findViewById(R.id.contactName);
-        tvContactName.setText(listContact.name);                //może lepiej getname zrobić, gettery i settery w Contact zrobic
+        //listContact = getItem(position);
+                //listContact.name = "default";
+        Log.d("listContact = getItem(position);", itemsArrayList.get(position).toString());
 
-        ivRedGreen = (ImageView)row.findViewById(R.id.onlineStatus);
-        ivRedGreen.setImageResource(listContact.online ? R.drawable.green : R.drawable.red);
+        tvContactName = (TextView)row.findViewById(R.id.contactName);   Log.d("listContact.name",itemsArrayList.get(position).name);
+        ivRedGreen = (ImageView)row.findViewById(R.id.onlineStatus);    Log.d("listContact.online",itemsArrayList.get(position).online.toString());
+        ivEnvelope = (ImageView)row.findViewById(R.id.envelope);        Log.d("listContact.areThereMessages",itemsArrayList.get(position).areThereMessages.toString());
 
-        ivEnvelope = (ImageView)row.findViewById(R.id.envelope);
-        ivRedGreen.setImageResource(listContact.areThereMessages ? R.drawable.envelope : R.drawable.line);
-
+        tvContactName.setText(itemsArrayList.get(position).name);                //może lepiej getname zrobić, gettery i settery w Contact zrobic
+        ivRedGreen.setImageResource(itemsArrayList.get(position).online ? R.drawable.green : R.drawable.red);
+        ivEnvelope.setImageResource(itemsArrayList.get(position).areThereMessages ? R.drawable.envelope : R.drawable.line);
         singleContactContainer.setGravity(Gravity.LEFT);
-
         return row;
     }
+
+    public Bitmap decodeToBitmap(byte[] decodedByte) {
+        return BitmapFactory.decodeByteArray(decodedByte, 0, decodedByte.length);
+    }
+
 
 
 }
