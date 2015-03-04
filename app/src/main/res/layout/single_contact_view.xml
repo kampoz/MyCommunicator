@@ -15,20 +15,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/onlineStatus"
-            android:src="@drawable/red"/>
+            android:src="@drawable/red"
+            android:layout_marginRight="10dp"
+            android:paddingLeft="10dip"/>
 
         <TextView
             android:id="@+id/contactName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Contact name"
-             />
+            android:textSize="20dp"
+            android:layout_marginRight="10dp"/>
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/envelope"
             android:src="@drawable/envelope"
+            android:layout_marginRight="10dp"
              />
 
     </LinearLayout>

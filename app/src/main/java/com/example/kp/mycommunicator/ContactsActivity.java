@@ -49,8 +49,6 @@ public class ContactsActivity extends ActionBarActivity {
 
         contactsArrayAdapter = new ContactsArrayAdapter(this, contactsList);
 
-
-
         Intent intent = getIntent();
         extras = intent.getExtras();
         login = extras.getString("login");
@@ -70,8 +68,6 @@ public class ContactsActivity extends ActionBarActivity {
         listView = (ListView) findViewById(R.id.listView);
         Toast.makeText(getApplicationContext(), "Wczytywanie kontaktów...", Toast.LENGTH_LONG).show();
 
-        //contactsArrayAdapter = new ContactsArrayAdapter(getApplicationContext(),R.layout.single_contact_view);
-
         listView.setAdapter(contactsArrayAdapter);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
@@ -81,18 +77,19 @@ public class ContactsActivity extends ActionBarActivity {
                 R.layout.contacts_list_view,
                 contacts);
         listView.setAdapter(arrayAdapter);
+        */
 
         //obługa zdarzenia kliknięcia kontaktu z listy kontaków
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                Log.d(log, "<CLIENT>Kliknięto pozycje : "+contacts.get(position));
-                conversationActivity(contacts.get(position));
-                MainActivity.interlocutor = contacts.get(position);
+                Log.d(log, "<CLIENT>Kliknięto pozycje : "+contactsList.get(position));
+                conversationActivity(contactsList.get(position).name);
+                MainActivity.interlocutor = contactsList.get(position).name;
             }
         });
-        */
+
 
         bWyszukiwanie.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,6 +140,7 @@ public class ContactsActivity extends ActionBarActivity {
             return null;
         }
 
+
         protected void onPostExecute(Void result) {
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getApplicationContext(),
                     R.layout.contacts_list_view, contactsList);
@@ -156,7 +154,6 @@ public class ContactsActivity extends ActionBarActivity {
                     MainActivity.interlocutor = contactsList.get(position);
                 }
             });
-
         }
     }
 
@@ -182,9 +179,6 @@ public class ContactsActivity extends ActionBarActivity {
                     Log.d(log, time.getTime()+" /AsyncTask GetContacts/Bufferreader ");
                 Input = br.readLine();
                     Log.d(log, time.getTime()+" /AsyncTask GetContacts/ Input "+Input);
-                //JSONObject jInput = new JSONObject(Input);
-
-                publishProgress(1);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -237,26 +231,26 @@ public class ContactsActivity extends ActionBarActivity {
 
 
         protected void onPostExecute(Void result) {
-
             boolean online =  false;
             boolean unsedMessage = false;
-            String contactName = "";
-
-
+            //String contactName = "";
+            String contactName;
 
             try {
-
                 JSONObject jInput = new JSONObject(Input);
                 String serverAction = (String)jInput.get("serverAction");
-                //dopisać jezeli if serverAction equals...
+
                 JSONArray jContactsArray = (JSONArray)jInput.get("contacts");
-                //Wypakowac tablicę jsonarray contacts i dodać w pętli do adaptera poszczególne elementy!!!!!!
+
+                    Log.d("DDDDDDługość jContactsArray", new Integer(jContactsArray.length()).toString());      //jest 5
                 for (int i=0; i<jContactsArray.length(); i++ )
                 {
-                    JSONObject jRow = (JSONObject) jContactsArray.get(i);
-                        Log.d(log, time.getTime()+" jRow "+jRow.toString());
-                    String onlineInfo = (String) jRow.get("online");
+
+                    JSONObject jRow = (JSONObject) jContactsArray.get(i);       Log.d(log, time.getTime()+" jRow "+jRow.toString());
+
+
                     contactName = (String) jRow.get("name");
+                    String onlineInfo = (String) jRow.get("online");        //wyjmuje stringa "true" lub "false"
                     String unsendMessagesInfo = (String) jRow.get("unsendMessages");
 
 
@@ -267,29 +261,26 @@ public class ContactsActivity extends ActionBarActivity {
                     }
 
                     if(unsendMessagesInfo.equals("true")){
-                        unsedMessage = true;
+                       unsedMessage = true;
                     }else if(unsendMessagesInfo.equals("false")){
                         unsedMessage = false;
-
                     }
 
-                    //contactsList.add(new Contact(true, "coś tam", false));
+
+                    Log.d(log, time.getTime()+" "+i+") przejscie petli for, przed add"+contactsList.toString());
                     contactsArrayAdapter.add(new Contact(online, contactName, unsedMessage));
 
-                    Log.d(log, time.getTime()+" >>>>>>>>>contactsArrayAdapter.add contact domyślny");
+                    Log.d(log, time.getTime()+" "+i+") przejscie petli for, po add"+contactsList.toString());
 
                 }
-                //contactsArrayAdapter = new ContactsArrayAdapter(getApplicationContext(),contactsList);
-                //contactsArrayAdapter.addAll(contactsList);
+
                 Log.d(log, time.getTime()+" Cała tablica dodana do adaptera: "+contactsList.toString());
 
 
                 }catch (JSONException e) {
                 e.printStackTrace();
                 }
-
-
-            super.onPostExecute(result);
+            //super.onPostExecute(result);
 
         }
 

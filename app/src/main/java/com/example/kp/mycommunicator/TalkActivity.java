@@ -39,7 +39,6 @@ public class TalkActivity extends ActionBarActivity {
     private String JSONOutputMessage;
     private String JSONInputMessage;
     private static final String HOST = "192.168.0.18";
-    private String log = "/TalkActivity/";
     private static final int PORT = 7777;
     private BufferedReader br;
     private Bundle extras;
@@ -47,17 +46,19 @@ public class TalkActivity extends ActionBarActivity {
     private ArrayList<String> messegesArray;
     private ArrayAdapter<String> arrayAdapter;              //to nie bedzie potrzebne jak zadziala drugi adapter
     private MessageArrayAdapter messageArrayAdapter;
-    TextView tv;
+    private TextView tv;
+    private String log = "TalkActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_talk);
+            Log.d(log, "Start TalkActivity");
 
         messegesArray = new ArrayList<String>();
         Intent intent = getIntent();
         extras = intent.getExtras();
-//        Log.d(extras.getString("to"), extras.getString("to"));
+            Log.d(log, "extras.getString(\"to\") "+ extras.getString("to"));
         et = (EditText)findViewById(R.id.editText3);
         tv = (TextView)findViewById(R.id.textView2);
         tv.setText(MainActivity.interlocutor);
@@ -77,7 +78,9 @@ public class TalkActivity extends ActionBarActivity {
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
         RequestUnsentMessages requestUnsentMessages = new RequestUnsentMessages();
+                Log.d(log, "Utworzenie obiektu RequestUnsentMessages");
         requestUnsentMessages.execute();
+                Log.d(log, " requestUnsentMessages.execute();");
 
         //wysyłanie wiadomości
         bSendMessage = (Button)findViewById(R.id.button3);
@@ -97,16 +100,17 @@ public class TalkActivity extends ActionBarActivity {
     private class SendMessage extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            Log.d("Gecko", "SendMessagee");
+                Log.d(log, "SendMessage start wątku");
             try {
                 Socket s = new Socket(HOST, PORT);
                 printWriter = new PrintWriter(s.getOutputStream(), true);
                 String login = UserInfo.getInstance().login;
+
                 JSONOutputMessage = "{ \"action\": \"message\", \"from\": \""+login+"\"," +
                                     " \"to\": \""+extras.getString("to")+"\",  " +
                                     "\"contents\": \""+message+"\" }";
                 printWriter.println(JSONOutputMessage);
-                Log.d(log, "AsyncTask - SendMessage/JSON "+JSONOutputMessage+" wysłany!!!! na " + s);
+                    Log.d(log, "AsyncTask - SendMessage/JSON "+JSONOutputMessage+" wysłany!!!! na " + s);
                 //br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 //JSONInputMessage = br.readLine();       //to jest String
                                                                             // <----------Można potwierdzić JSONem dostarczenie wiadomosci
@@ -131,8 +135,10 @@ public class TalkActivity extends ActionBarActivity {
     }
 
     private class RequestUnsentMessages extends AsyncTask<Object, Integer, Void> {
+
         @Override
         protected Void doInBackground(Object... params) {
+            Log.d(log, "RequestUnsentMessages - start wątku");
             while(true) {
                 try {
                     Socket s = new Socket(HOST, PORT);
@@ -141,7 +147,7 @@ public class TalkActivity extends ActionBarActivity {
                     JSONOutputMessage = "{ \"action\": \"RequestMessages\", \"from\": \""
                             + extras.getString("to") + "\", \"to\": \"" + login + "\" }";
                     printWriter.println(JSONOutputMessage);
-                    Log.d(log, "/AsyncTask - RequestUnsentMessages/PrintWriter: " + JSONOutputMessage + "\n wysłany!!!! na " + s);
+                        Log.d(log, "/AsyncTask - RequestUnsentMessages/PrintWriter: " + JSONOutputMessage + "\n wysłany!!!! na " + s);
                     br = new BufferedReader(new InputStreamReader(s.getInputStream()));
                     JSONInputMessage = br.readLine();
 
