@@ -157,7 +157,7 @@ public class ContactsActivity extends ActionBarActivity {
         }
     }
 
-    private class GetContacts extends AsyncTask<Object, Integer, Void> {         //nowy wątek do pobierania konataktów
+    private class GetContacts extends AsyncTask<Object, Integer, Void>  {         //nowy wątek do pobierania konataktów
 
         Time time = new Time();
         @Override
@@ -291,6 +291,7 @@ public class ContactsActivity extends ActionBarActivity {
         @Override
         protected Void doInBackground(Void... params) {
             Time time = new Time();
+            Log.d(log,time.getTime()+ " AsyncTask/OnlineStatus. Start metody");
             try {
                 while(true)
                 {

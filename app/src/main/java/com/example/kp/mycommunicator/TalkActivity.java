@@ -29,6 +29,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class TalkActivity extends ActionBarActivity {
     private EditText et;
@@ -77,9 +79,11 @@ public class TalkActivity extends ActionBarActivity {
         listView.setAdapter(messageArrayAdapter);
         listView.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
+        Executor executor = Executors.newScheduledThreadPool(3);
         RequestUnsentMessages requestUnsentMessages = new RequestUnsentMessages();
                 Log.d(log, "Utworzenie obiektu RequestUnsentMessages");
-        requestUnsentMessages.execute();
+        //requestUnsentMessages.execute();
+        requestUnsentMessages.executeOnExecutor(executor);
                 Log.d(log, " requestUnsentMessages.execute();");
 
         //wysyłanie wiadomości
