@@ -26,6 +26,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 
 public class ContactsActivity extends ActionBarActivity {
@@ -40,6 +42,7 @@ public class ContactsActivity extends ActionBarActivity {
     String Input = " ";
     private List<Contact> contactsList = new ArrayList<>();
     private ContactsArrayAdapter contactsArrayAdapter;
+    private Executor executor= Executors.newScheduledThreadPool(3);
 
 
     @Override
@@ -58,7 +61,7 @@ public class ContactsActivity extends ActionBarActivity {
         //getContactsList.execute();
 
         GetContacts getContacts = new GetContacts();                            //nowa klasa z kontaktami i nowym adapterem
-        getContacts.execute();
+        getContacts.executeOnExecutor(executor);
 
         //Klasa tworzy wątek ustaw. status usera na online na serwerze, wysyłapotwierdzenie online co kilka sekund
         OnlineStatus onlineStatus = new OnlineStatus();
@@ -119,7 +122,6 @@ public class ContactsActivity extends ActionBarActivity {
                 String Input = br.readLine();
                 JSONObject jInput = new JSONObject(Input);
                 String serverAction = (String)jInput.get("serverAction");
-                //contacts = null;
                 if (serverAction.equals("sendContactsList")){
                     JSONArray jContactsList = (JSONArray) jInput.get("contactsList");
                     contactsList = new ArrayList<String>();
@@ -127,7 +129,6 @@ public class ContactsActivity extends ActionBarActivity {
                     if (jContactsList != null) {
                         for (int i=0;i<jContactsList.length();i++){
                             contactsList.add(jContactsList.get(i).toString());
-
                         }
                     }
                     Log.d(log, " Lista kontaktów contactsList: "+contactsList);
@@ -159,77 +160,42 @@ public class ContactsActivity extends ActionBarActivity {
 
     private class GetContacts extends AsyncTask<Object, Integer, Void>  {         //nowy wątek do pobierania konataktów
 
+        boolean running = true;
         Time time = new Time();
+
         @Override
         protected Void doInBackground(Object... params) {
 
+
             try {
-                Socket s = new Socket(HOST, PORT);
-                JSONObject jOut = new JSONObject();
-                jOut.put("action", "actualizeContacts");
-                jOut.put("user", login);
-                String request = jOut.toString();
-                PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
-                    Log.d(log, time.getTime()+" /AsyncTask GetContacts/ "+jOut.toString() );
-                printWriter.println(request);
-                printWriter.flush();
-                    Log.d(log, time.getTime()+" /AsyncTask GetContacts/PrintWriter ");
 
-                BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                    Log.d(log, time.getTime()+" /AsyncTask GetContacts/Bufferreader ");
-                Input = br.readLine();
-                    Log.d(log, time.getTime()+" /AsyncTask GetContacts/ Input "+Input);
-
+                while (true)
+                {
+                    Socket s = new Socket(HOST, PORT);
+                    JSONObject jOut = new JSONObject();
+                    jOut.put("action", "actualizeContacts");
+                    jOut.put("user", login);
+                    String request = jOut.toString();
+                    PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
+                        Log.d(log, time.getTime() + " /AsyncTask GetContacts/doInBackground " + jOut.toString());
+                    printWriter.println(request);
+                    printWriter.flush();
+                        Log.d(log, time.getTime() + " /AsyncTask GetContacts/doInBackground/PrintWriter ");
+                    BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                        Log.d(log, time.getTime() + " /AsyncTask GetContacts/Bufferreader ");
+                    Input = br.readLine();
+                        Log.d(log, time.getTime() + " /AsyncTask GetContacts/doInBackground/ Input " + Input);
+                    publishProgress(1);
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
-        }
-
-        /*
-        protected void onProgressUpdate (Integer... values) {
-            boolean online =  false;
-            boolean unsedMessage = false;
-            try {
-
-                JSONObject jInput = new JSONObject(Input);
-                String serverAction = (String)jInput.get("serverAction");
-                //dopisać jezeli if serverAction equals...
-                JSONArray jContactsArray = (JSONArray)jInput.get("contacts");
-                //Wypakowac tablicę jsonarray contacts i dodać w pętli do adaptera poszczególne elementy!!!!!!
-                for (int i=0; i<jContactsArray.length(); i++ ){
-                    JSONObject jRow = (JSONObject) jContactsArray.get(i);
-                    Log.d(log, time.getTime()+" jRow "+jRow.toString());
-                    String onlineInfo = (String) jRow.get("online");
-                    String contactName = (String) jRow.get("name");
-                    String unsendMessagesInfo = (String) jRow.get("unsendMessages");
-
-                    if(onlineInfo.equals("true")){
-                        online = true;
-                    }else if(onlineInfo.equals("false")){
-                        online = false;
-                    }
-
-                    if(unsendMessagesInfo.equals("true")){
-                        unsedMessage = true;
-                    }else if(unsendMessagesInfo.equals("false")){
-                        unsedMessage = false;
-
-                        contactsArrayAdapter.add(new Contact(online, contactName, unsedMessage));
-                    }
-                }
-
-            }catch (JSONException e) {
-                e.printStackTrace();
+                return null;
             }
 
-            super.onProgressUpdate(values);
-        }
-        */
-
-
+        /*
         protected void onPostExecute(Void result) {
             boolean online =  false;
             boolean unsedMessage = false;
@@ -242,7 +208,7 @@ public class ContactsActivity extends ActionBarActivity {
 
                 JSONArray jContactsArray = (JSONArray)jInput.get("contacts");
 
-                    Log.d("DDDDDDługość jContactsArray", new Integer(jContactsArray.length()).toString());      //jest 5
+                Log.d("DDDDDDługość jContactsArray", new Integer(jContactsArray.length()).toString());      //jest 5
                 for (int i=0; i<jContactsArray.length(); i++ )
                 {
 
@@ -261,7 +227,7 @@ public class ContactsActivity extends ActionBarActivity {
                     }
 
                     if(unsendMessagesInfo.equals("true")){
-                       unsedMessage = true;
+                        unsedMessage = true;
                     }else if(unsendMessagesInfo.equals("false")){
                         unsedMessage = false;
                     }
@@ -272,26 +238,76 @@ public class ContactsActivity extends ActionBarActivity {
 
                     Log.d(log, time.getTime()+" "+i+") przejscie petli for, po add"+contactsList.toString());
 
+
                 }
 
                 Log.d(log, time.getTime()+" Cała tablica dodana do adaptera: "+contactsList.toString());
 
 
-                }catch (JSONException e) {
+            }catch (JSONException e) {
                 e.printStackTrace();
-                }
+            }
+
             //super.onPostExecute(result);
 
-        }
 
+        }
+        */
+
+        protected void onProgressUpdate(Integer... values) {
+            boolean online =  false;
+            boolean unsedMessage = false;
+            //String contactName = "";
+            String contactName;
+
+            try {
+                JSONObject jInput = new JSONObject(Input);
+                String serverAction = (String)jInput.get("serverAction");
+
+                JSONArray jContactsArray = (JSONArray)jInput.get("contacts");
+
+                Log.d("DDDDDDługość jContactsArray", new Integer(jContactsArray.length()).toString());      //jest 5
+                contactsArrayAdapter.clear();
+                for (int i=0; i<jContactsArray.length(); i++ )
+                {
+
+                    JSONObject jRow = (JSONObject) jContactsArray.get(i);       Log.d(log, time.getTime()+" jRow "+jRow.toString());
+
+
+                    contactName = (String) jRow.get("name");
+                    String onlineInfo = (String) jRow.get("online");        //wyjmuje stringa "true" lub "false"
+                    String unsendMessagesInfo = (String) jRow.get("unsendMessages");
+
+
+                    if(onlineInfo.equals("true")){
+                        online = true;
+                    }else if(onlineInfo.equals("false")){
+                        online = false;
+                    }
+
+                    if(unsendMessagesInfo.equals("true")){
+                        unsedMessage = true;
+                    }else if(unsendMessagesInfo.equals("false")){
+                        unsedMessage = false;
+                    }
+                    contactsArrayAdapter.add(new Contact(online, contactName, unsedMessage));
+                        Log.d(log, time.getTime()+" "+i+") GetContacts/onProgressUpdate  przejscie petli for, po add"+contactsList.toString());
+                }
+
+                Log.d(log, time.getTime()+" GetContacts/onProgressUpdate  Cała tablica dodana do adaptera: "+contactsList.toString());
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+           //super.onPostExecute(result);
+        }
     }
 
 
     private class OnlineStatus extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
+
             Time time = new Time();
-            Log.d(log,time.getTime()+ " AsyncTask/OnlineStatus. Start metody");
             try {
                 while(true)
                 {

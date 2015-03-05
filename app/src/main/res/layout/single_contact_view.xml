@@ -17,6 +17,7 @@
             android:id="@+id/onlineStatus"
             android:src="@drawable/red"
             android:layout_marginRight="10dp"
+            android:layout_gravity="center"
             android:paddingLeft="10dip"/>
 
         <TextView
@@ -32,6 +33,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/envelope"
             android:src="@drawable/envelope"
+            android:layout_gravity="center"
             android:layout_marginRight="10dp"
              />
 

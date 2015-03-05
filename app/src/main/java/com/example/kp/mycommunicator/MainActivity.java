@@ -12,8 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.*;
 import java.net.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends ActionBarActivity {
     private TextView tv;
@@ -32,6 +38,7 @@ public class MainActivity extends ActionBarActivity {
     String resp;
     public static String interlocutor;
     private String log = "<Gecco>";
+    private Executor executor = Executors.newScheduledThreadPool(5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -47,6 +54,8 @@ public class MainActivity extends ActionBarActivity {
         passwordEt.setText("111");
         //GetResponse getResponseTask = new GetResponse();
         //getResponseTask.execute();
+
+
 
         bLogin.setOnClickListener(new View.OnClickListener() {
 
@@ -173,6 +182,44 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
         System.exit(0);
     }
+
+    /*
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        OnlineStatusOff onlineStatusOff = new OnlineStatusOff();
+        onlineStatusOff.executeOnExecutor(executor);
+
+    }
+    */
+
+    /*
+    private class OnlineStatusOff extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            Time time = new Time();
+            Log.d(log,time.getTime()+ " AsyncTask/OnlineStatusOff. Start metody");
+            try {
+                    Socket s = new Socket(HOST, PORT);
+                    JSONObject jOut = new JSONObject();
+                    jOut.put("action", "onlineStatusOff");
+                    jOut.put("user", UserInfo.getInstance());
+                    String request = jOut.toString();
+
+                    PrintWriter printWriter = new PrintWriter(s.getOutputStream(), true);
+                    printWriter.println(request);
+                    printWriter.flush();
+                    Log.d(log,time.getTime()+ " AsyncTask/OnlineStatusOff . JSON wysłany "+request);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+    */
 }
 
 

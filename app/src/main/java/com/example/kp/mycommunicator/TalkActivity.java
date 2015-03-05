@@ -173,30 +173,17 @@ public class TalkActivity extends ActionBarActivity {
         }
 
         protected void onProgressUpdate (Integer... values) {       //TA METODA CHYBA DO USUNIĘCIA, BO JEST ONPOSTEXECUTE!!!!
-            /*try {
-                JSONObject jsonObject = new JSONObject(JSONInputMessage);
-                JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
-                if(jsonArray!=null) {                           // wywalic warunek jak bedzie dzialac
-
-//////////////////////////////////////////////////////////////////////
-                    //Message mess = new Message();
-                    //mess.message = jsonArray.getString(0);
-                    //messageArrayAdapter.add(mess);
-                    //////////////messageArrayAdapter.add(new Message(true, jsonArray.getString(0)));
-////////////////////////////////////////////////////////////////////
-                    //arrayAdapter.add(jsonArray.getString(0));   //zmiany w grafice muszą byc przeprowadzone tu, a nie w doInBackground
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
 
             try {
                 JSONObject jsonObject = new JSONObject(JSONInputMessage);
                 JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
-                String message = extras.getString("to")+": "+jsonArray.getString(0);
-                //arrayAdapter.add(s);
-                messageArrayAdapter.add(new Message(false, message));
+
+                //if (jsonArray.getString(0) !== null) {
+                    String message = extras.getString("to") + ": " + jsonArray.getString(0);
+                    //arrayAdapter.add(s);
+                    messageArrayAdapter.add(new Message(false, message));
+                //}
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -208,9 +195,11 @@ public class TalkActivity extends ActionBarActivity {
             try {
                 JSONObject jsonObject = new JSONObject(JSONInputMessage);
                 JSONArray jsonArray = (JSONArray)jsonObject.get("messages");
-                String message = extras.getString("to")+": "+jsonArray.getString(0);
-                //arrayAdapter.add(s);
-                messageArrayAdapter.add(new Message(false, message));
+
+                    String message = extras.getString("to") + ": " + jsonArray.getString(0);
+                    //arrayAdapter.add(s);
+                    messageArrayAdapter.add(new Message(false, message));
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -220,7 +209,6 @@ public class TalkActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.menu_talk, menu);
         return true;
     }
@@ -234,20 +222,4 @@ public class TalkActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-    /*
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_talk, container, false);
-            return rootView;
-        }
-    }
-    */
 }
