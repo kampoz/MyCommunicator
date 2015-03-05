@@ -186,13 +186,16 @@ public class ContactsActivity extends ActionBarActivity {
                     Input = br.readLine();
                         Log.d(log, time.getTime() + " /AsyncTask GetContacts/doInBackground/ Input " + Input);
                     publishProgress(1);
+                    Thread.sleep(3000);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-                return null;
+            return null;
             }
 
         /*
@@ -362,5 +365,10 @@ public class ContactsActivity extends ActionBarActivity {
         intent.putExtra("login", login );
         startActivity(intent);
         //System.exit(0);
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

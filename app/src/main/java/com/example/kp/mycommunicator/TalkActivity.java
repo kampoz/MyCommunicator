@@ -160,13 +160,15 @@ public class TalkActivity extends ActionBarActivity {
                     //}
                     publishProgress(1);
 
-                    //Thread.sleep(300);
+                    Thread.sleep(1000);
                     br.close();
                     s.close();
 
                 } catch (UnknownHostException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -222,4 +224,6 @@ public class TalkActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
 }
