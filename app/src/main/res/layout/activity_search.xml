@@ -47,7 +47,7 @@
             android:id="@+id/buttonSearch"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="5dp"
-            android:background="#BDBDBD"
+            android:background="#03c7d8"
             />
     </LinearLayout>
 

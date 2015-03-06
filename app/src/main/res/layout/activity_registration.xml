@@ -59,7 +59,7 @@
         android:layout_below="@+id/editText6"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        android:background="#BDBDBD"/>
+        android:background="#03c7d8"/>
 
 
 </RelativeLayout>
