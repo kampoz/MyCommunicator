@@ -65,7 +65,8 @@ public class ContactsActivity extends ActionBarActivity {
 
         //Klasa tworzy wątek ustaw. status usera na online na serwerze, wysyłapotwierdzenie online co kilka sekund
         OnlineStatus onlineStatus = new OnlineStatus();
-        onlineStatus.execute();
+        onlineStatus.executeOnExecutor(executor);
+
 
         bWyszukiwanie = (Button)findViewById(R.id.button2);
         listView = (ListView) findViewById(R.id.listView);
@@ -160,7 +161,6 @@ public class ContactsActivity extends ActionBarActivity {
 
     private class GetContacts extends AsyncTask<Object, Integer, Void>  {         //nowy wątek do pobierania konataktów
 
-        boolean running = true;
         Time time = new Time();
 
         @Override
