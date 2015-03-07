@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.*;
+import java.util.Date;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -37,8 +38,8 @@ public class MainActivity extends ActionBarActivity {
     String response = "Incorrect";
     String resp;
     public static String interlocutor;
-    private String log = "<Gecco>";
-    private Executor executor = Executors.newScheduledThreadPool(5);
+    private Executor executor = Executors.newScheduledThreadPool(2);
+    private String log = "<kl. MainActivity/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
@@ -52,30 +53,24 @@ public class MainActivity extends ActionBarActivity {
         passwordEt = (EditText) findViewById(R.id.editText2);
         userEt.setText("kamil");
         passwordEt.setText("111");
-        //GetResponse getResponseTask = new GetResponse();
-        //getResponseTask.execute();
 
-
+        CheckIfServerIsOnlie checkIfServerIsOnlie = new CheckIfServerIsOnlie();
+        checkIfServerIsOnlie.execute();
 
         bLogin.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
                 Time time = new Time();
-                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Kliknięcie bLogin");
                 Toast.makeText(getApplicationContext(),"Trwa logowanie...", Toast.LENGTH_SHORT).show();
-                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Wyswietlenie Toastu");
                 username = userEt.getText().toString();
-                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Pobranie tekstu z editText / username");
                 password = passwordEt.getText().toString();
-                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Pobranie tekstu z editText / password");
                 CheckLoginThread checkLoginThread = new CheckLoginThread();
-                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Nowy obiekt wątku CheckLoginThread");
-                checkLoginThread.execute();
-                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> checkLoginThread.execute();\n" +
-                            "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+                    //Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Nowy obiekt wątku CheckLoginThread");
+                //checkLoginThread.execute();
+                checkLoginThread.executeOnExecutor(executor);
+                    Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> checkLoginThread.execute();\n" +" ");
             }
         });
-
         bRegistration.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v) {
@@ -97,36 +92,25 @@ public class MainActivity extends ActionBarActivity {
                         Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: Stworzenie BufferWriter");
                 //printWriter = new PrintWriter(s.getOutputStream(), true);
                 request = "{ \"action\": \"login\", \"user\": \""+username+"\", \"password\": \""+password+"\" }";
-
                 bufOut.write( request );
-                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: bufOut.write( request )");
                 bufOut.newLine();
-                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: bufOut.newLine()");
                 bufOut.flush();
                         Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: Wysłanie jsona z użytkownikiem i hasłem; bufOut.flush()");
                 //printWriter.println(request);
                 //printWriter.flush();
-                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>JSON wysłany!!!! na " + s);
                 InputStream is =s.getInputStream();
-                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStreamReader isr>");
+                        //Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStreamReader isr>");
                 InputStreamReader isr = new InputStreamReader(is);
-                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStream is>");
+                        //Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie InputStream is>");
                 BufferedReader br1 = new BufferedReader(isr);
                         Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground/Stworzenie BufferedReader br1>\n" +
                                 "--------------------------------------------------------------------------------------------------");
-
-                //br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                //br = new BufferedReader(new InputStreamReader(new BufferedInputStream(s.getInputStream())));
-                        //Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Stworzenie BufferReader");
-                //response = br.readLine();
                 response = br1.readLine();
                         Log.d(log ,time.getTime()+" <MainActivity/AsyncTask/doInBackground/br.readLine() "+response);
-                //br.close();
                 br1.close();
-                //printWriter.close();
                 s.close(); // zamykanie socketu, bo juz jest nieużywany wiecej
 
-                if (response.equals("LOGIN CORRECT"))             //<-- wątek sendRequestTask chyba sie nie zakoncza przy pierwszym wywołaniu if
+                if (response.equals("LOGIN CORRECT"))
                 {
                     UserInfo userInfo = UserInfo.getInstance();
                     userInfo.login = userEt.getText().toString();
@@ -147,10 +131,49 @@ public class MainActivity extends ActionBarActivity {
             }
             return null;
         }
-
         protected void onPostExecute(Void result) {
             Log.d("onPostExecute", "onPostExecute");
         }
+    }
+
+    private class CheckIfServerIsOnlie extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            while (true) {
+                Date dzien = new Date();
+                if (exists("http://89.68.58.161:7777")) {                //<----wstawić ip
+                    Toast.makeText(getApplicationContext(),"Wykryto serwer Gecco", Toast.LENGTH_LONG).show();
+                    Log.d(log, "Działa "+dzien);            //tekst na konsoli
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Brak połączenia z serwerem", Toast.LENGTH_LONG).show();
+                    Log.d(log, "Serwer nie działa!");
+                }
+                try{
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        public boolean exists(String URLName) {          //metoda sprawdza czy dany IP jest online
+
+            HttpURLConnection con = null;
+            try {
+                con = (HttpURLConnection) new URL(URLName).openConnection();
+                con.setRequestMethod("HEAD");
+                return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+            } catch (IOException e) {
+                //e.printStackTrace();
+                Log.d(log+"/(AsyncTask)CheckIfServerIsOnlie", "Błąd IOException");
+            }
+            return false;
+        }
+
     }
 
     @Override
