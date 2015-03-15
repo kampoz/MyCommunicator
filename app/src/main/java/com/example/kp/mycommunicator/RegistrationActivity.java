@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -167,5 +168,16 @@ public class RegistrationActivity extends ActionBarActivity {
     public void startMainActivity(){
         Intent intent = new Intent (this, MainActivity.class );
         startActivity(intent);
+    }
+
+    //to dodane 15/03/2015
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

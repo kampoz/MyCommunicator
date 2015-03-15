@@ -31,14 +31,11 @@ public class MainActivity extends ActionBarActivity {
     private String request;
     private static final String HOST = "192.168.0.18";
     private static final int PORT = 7777;
-    private PrintWriter printWriter;
-    private BufferedReader br;
     String username = null;
     String password = null;
     String response = "Incorrect";
-    String resp;
     public static String interlocutor;
-    private Executor executor = Executors.newScheduledThreadPool(2);
+    //private Executor executor = Executors.newScheduledThreadPool(2);
     private String log = "<kl. MainActivity/";
 
     @Override
@@ -54,8 +51,8 @@ public class MainActivity extends ActionBarActivity {
         userEt.setText("kamil");
         passwordEt.setText("111");
 
-        CheckIfServerIsOnlie checkIfServerIsOnlie = new CheckIfServerIsOnlie();
-        checkIfServerIsOnlie.execute();
+        //CheckIfServerIsOnlie checkIfServerIsOnlie = new CheckIfServerIsOnlie();
+        //checkIfServerIsOnlie.execute();
 
         bLogin.setOnClickListener(new View.OnClickListener() {
 
@@ -66,8 +63,8 @@ public class MainActivity extends ActionBarActivity {
                 password = passwordEt.getText().toString();
                 CheckLoginThread checkLoginThread = new CheckLoginThread();
                     //Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> Nowy obiekt wątku CheckLoginThread");
-                //checkLoginThread.execute();
-                checkLoginThread.executeOnExecutor(executor);
+                checkLoginThread.execute();
+                //checkLoginThread.executeOnExecutor(executor);
                     Log.d(log,time.getTime()+" <MainActivity><bLogin/OnClick> checkLoginThread.execute();\n" +" ");
             }
         });
@@ -136,7 +133,9 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private class CheckIfServerIsOnlie extends AsyncTask<Void, Void, Void> {
+
+    /*
+    private class CheckIfServerIsOnline extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
 
@@ -174,7 +173,7 @@ public class MainActivity extends ActionBarActivity {
             return false;
         }
 
-    }
+    } */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
