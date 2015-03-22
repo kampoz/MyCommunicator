@@ -29,7 +29,11 @@ public class MainActivity extends ActionBarActivity {
     private EditText userEt;
     private EditText passwordEt;
     private String request;
+
     private static final String HOST = "192.168.0.18";
+    //private static final String HOST = "kaseka.strangled.net";
+    //private static final String HOST = "89.79.118.161";
+
     private static final int PORT = 7777;
     String username = null;
     String password = null;
@@ -84,7 +88,7 @@ public class MainActivity extends ActionBarActivity {
         protected Void doInBackground(Void... params) {
             try {
                 Socket s = new Socket(HOST, PORT);
-                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground> Logowanie: otwarcie socketu");
+                        Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground> Logowanie: new Socket(HOST, PORT)");
                 BufferedWriter bufOut = new BufferedWriter( new OutputStreamWriter( s.getOutputStream()));
                         Log.d(log,time.getTime()+" <MainActivity/AsyncTask/doInBackground>Logowanie: Stworzenie BufferWriter");
                 //printWriter = new PrintWriter(s.getOutputStream(), true);

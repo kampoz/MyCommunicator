@@ -42,6 +42,7 @@ public class TalkActivity extends ActionBarActivity {
     private String JSONOutputMessage;
     private String JSONInputMessage;
     private static final String HOST = "192.168.0.18";
+    //private static final String HOST = "kaseka.strangled.net";
     private static final int PORT = 7777;
     private BufferedReader br;
     private Bundle extras;

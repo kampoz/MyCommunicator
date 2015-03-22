@@ -38,6 +38,8 @@ public class ContactsActivity extends ActionBarActivity {
     private Bundle extras;
     String login;
     private static final String HOST = "192.168.0.18";
+    //private static final String HOST = "kaseka.strangled.net";
+    //private static final String HOST = "89.79.118.161";
     private static final int PORT = 7777;
     String Input = " ";
     private List<Contact> contactsList = new ArrayList<>();
